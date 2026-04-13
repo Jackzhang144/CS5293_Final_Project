@@ -518,8 +518,8 @@ const ThreatModelSlide = () => (
 );
 
 // Need Target icon - use a workaround with Box
-const Target = ({ sx }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" sx={sx}>
+const Target = ({ sx }: { sx?: any }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={sx}>
     <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
     <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" strokeWidth="2"/>
     <circle cx="12" cy="12" r="2"/>

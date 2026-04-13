@@ -21,13 +21,6 @@ const theme = createTheme({
       primary: '#1a1a2e',
       secondary: '#64748b',
     },
-    accent: {
-      red: '#dc2626',
-      cyan: '#0891b2',
-      purple: '#7c3aed',
-      green: '#059669',
-      yellow: '#d97706',
-    },
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
