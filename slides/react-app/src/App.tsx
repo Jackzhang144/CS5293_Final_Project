@@ -86,6 +86,7 @@ const accent = {
 
 // Styled animated card
 const AnimatedCard = styled(Card)(({ theme }) => ({
+  opacity: 0,
   animation: 'fadeInUp 0.6s ease forwards',
   '@keyframes fadeInUp': {
     from: { opacity: 0, transform: 'translateY(20px)' },
@@ -577,7 +578,7 @@ const AttackTaxonomySlide = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minWidth: 140,
+                width: 160,
               }}
             >
               <Chip
@@ -590,6 +591,7 @@ const AttackTaxonomySlide = () => {
                   fontSize: '0.6875rem',
                   fontWeight: 600,
                   height: 28,
+                  maxWidth: 'none',
                   '& .MuiChip-icon': { color: accent.red },
                 }}
               />
