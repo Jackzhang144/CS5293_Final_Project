@@ -244,7 +244,9 @@ const TitleSlide = () => (
       }}
     />
     <Zoom in timeout={600}>
-      <SlideLabel>Topic 22 - Module 5: AI Security and Emerging Topics</SlideLabel>
+      <Box>
+        <SlideLabel>Topic 22 - Module 5: AI Security and Emerging Topics</SlideLabel>
+      </Box>
     </Zoom>
     <Typography variant="h1" sx={{ mb: 2, animation: 'fadeInUp 0.8s ease 0.2s forwards', opacity: 0 }}>
       <GradientText color="red">LLM Jailbreaks</GradientText>
@@ -912,9 +914,11 @@ const ConclusionSlide = () => (
 const QASlide = () => (
   <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
     <Zoom in timeout={400}>
-      <Typography variant="h1" sx={{ mb: 2 }}>
-        <GradientText color="red">Q&amp;A</GradientText>
-      </Typography>
+      <Box>
+        <Typography variant="h1" sx={{ mb: 2 }}>
+          <GradientText color="red">Q&amp;A</GradientText>
+        </Typography>
+      </Box>
     </Zoom>
     <Fade in timeout={800}>
       <Typography variant="h3" color="text.secondary" sx={{ mb: 6 }}>
