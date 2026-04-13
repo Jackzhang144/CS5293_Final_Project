@@ -85,7 +85,7 @@ const accent = {
 };
 
 // Styled animated card
-const AnimatedCard = styled(Card)(({ theme }) => ({
+const AnimatedCard = styled(Card)(() => ({
   opacity: 0,
   animation: 'fadeInUp 0.6s ease forwards',
   '@keyframes fadeInUp': {
@@ -519,7 +519,7 @@ const ThreatModelSlide = () => (
 );
 
 // Need Target icon - use a workaround with Box
-const Target = ({ sx }: { sx?: any }) => (
+const Target = ({ sx }: { sx?: React.CSSProperties }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={sx}>
     <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
     <circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -984,12 +984,12 @@ function App() {
     }
   }, [currentSlide]);
 
-  const goToSlide = useCallback((index) => {
+  const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index);
   }, []);
 
   React.useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
         e.preventDefault();
         goToNext();
