@@ -20,6 +20,7 @@
       --accent-yellow: #d97706;
       --text-primary: #1a1a2e;
       --text-secondary: #64748b;
+      --text-tertiary: #94a3b8;
       --border-color: rgba(0, 0, 0, 0.08);
       --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
       --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
@@ -195,24 +196,43 @@
     }
 
     h3 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
     }
 
     p {
-      font-size: 1.125rem;
+      font-size: 1rem;
       line-height: 1.7;
       color: var(--text-secondary);
-      max-width: 800px;
+    }
+
+    /* Two Column Layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      width: 100%;
+      max-width: 1100px;
+      align-items: start;
+    }
+
+    .col-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent-red);
+      margin-bottom: 1rem;
+      display: block;
     }
 
     /* Cards */
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
       width: 100%;
       max-width: 1200px;
     }
@@ -220,8 +240,8 @@
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 2rem;
+      border-radius: 12px;
+      padding: 1.5rem;
       position: relative;
       overflow: hidden;
       opacity: 0;
@@ -253,24 +273,25 @@
     }
 
     .card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
     }
 
     .card-title {
-      font-size: 1.125rem;
+      font-size: 1rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
     }
 
     .card-desc {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
       color: var(--text-secondary);
       line-height: 1.6;
     }
@@ -279,11 +300,11 @@
     .taxonomy-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
       display: flex;
       align-items: flex-start;
-      gap: 1.5rem;
+      gap: 1.25rem;
       opacity: 0;
       transform: translateX(-20px);
       box-shadow: var(--shadow);
@@ -293,32 +314,36 @@
     .taxonomy-card:nth-child(2) { animation: slideIn 0.5s ease 0.2s forwards; }
     .taxonomy-card:nth-child(3) { animation: slideIn 0.5s ease 0.3s forwards; }
     .taxonomy-card:nth-child(4) { animation: slideIn 0.5s ease 0.4s forwards; }
+    .taxonomy-card:nth-child(5) { animation: slideIn 0.5s ease 0.5s forwards; }
 
     .taxonomy-num {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       color: var(--accent-red);
       background: rgba(220, 38, 38, 0.08);
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 16px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .taxonomy-content h3 {
       color: var(--text-primary);
-      font-size: 1.125rem;
-      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 0.375rem;
     }
 
     .taxonomy-content p {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
     }
 
     /* Defense Cards */
     .defense-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      gap: 1.25rem;
       width: 100%;
       max-width: 1100px;
     }
@@ -326,9 +351,9 @@
     .defense-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.75rem;
-      text-align: center;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: left;
       position: relative;
       overflow: hidden;
       opacity: 0;
@@ -358,22 +383,23 @@
       font-size: 0.6875rem;
       text-transform: uppercase;
       letter-spacing: 0.15em;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
       display: block;
     }
 
     .defense-card:nth-child(1) .defense-label { color: var(--accent-red); }
-    .defense-card:nth-child(2) .defense-label { color: var(--accent-cyan); }
+    .defense-card:nth-child(2) .def-label { color: var(--accent-cyan); }
     .defense-card:nth-child(3) .defense-label { color: var(--accent-purple); }
 
     .defense-title {
-      font-size: 1.125rem;
+      font-size: 1.0625rem;
       font-weight: 600;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.625rem;
+      color: var(--text-primary);
     }
 
     .defense-desc {
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       color: var(--text-secondary);
       line-height: 1.6;
     }
@@ -381,7 +407,7 @@
     /* Timeline */
     .timeline {
       display: flex;
-      gap: 2rem;
+      gap: 1.5rem;
       width: 100%;
       max-width: 1000px;
     }
@@ -391,7 +417,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.5rem;
+      padding: 1.25rem;
       position: relative;
       opacity: 0;
       transform: translateY(20px);
@@ -405,15 +431,16 @@
 
     .timeline-year {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       color: var(--accent-yellow);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.375rem;
     }
 
     .timeline-title {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.375rem;
+      color: var(--text-primary);
     }
 
     .timeline-desc {
@@ -424,7 +451,7 @@
 
     /* Quote */
     .quote {
-      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-size: clamp(1.25rem, 2.5vw, 1.625rem);
       font-weight: 500;
       font-style: italic;
       text-align: center;
@@ -437,19 +464,19 @@
 
     .quote::before {
       content: '"';
-      font-size: 6rem;
+      font-size: 5rem;
       position: absolute;
-      top: -2rem;
-      left: -3rem;
+      top: -1.75rem;
+      left: -2.5rem;
       color: var(--accent-red);
-      opacity: 0.3;
+      opacity: 0.25;
       font-family: Georgia, serif;
     }
 
     /* Comparison Table */
     .comparison-table {
       width: 100%;
-      max-width: 900px;
+      max-width: 950px;
       border-collapse: collapse;
       margin-top: 1rem;
       background: var(--bg-card);
@@ -460,22 +487,19 @@
 
     .comparison-table th,
     .comparison-table td {
-      padding: 1rem 1.5rem;
+      padding: 0.875rem 1.25rem;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
+      font-size: 0.875rem;
     }
 
     .comparison-table th {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.6875rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-secondary);
       font-weight: 400;
-    }
-
-    .comparison-table td {
-      font-size: 0.9375rem;
     }
 
     .comparison-table tr {
@@ -489,24 +513,12 @@
     .comparison-table tr:nth-child(4) { animation-delay: 0.4s; }
     .comparison-table tr:nth-child(5) { animation-delay: 0.5s; }
 
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-
-    .badge-high { background: rgba(5, 150, 105, 0.1); color: var(--accent-green); }
-    .badge-medium { background: rgba(217, 119, 6, 0.1); color: var(--accent-yellow); }
-    .badge-low { background: rgba(220, 38, 38, 0.1); color: var(--accent-red); }
-
     /* Outline List */
     .outline-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.875rem;
       width: 100%;
       max-width: 700px;
     }
@@ -514,8 +526,8 @@
     .outline-item {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      font-size: 1.25rem;
+      gap: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 500;
       padding: 1rem 1.5rem;
       background: var(--bg-card);
@@ -543,13 +555,14 @@
       justify-content: center;
       background: rgba(0, 212, 255, 0.1);
       border-radius: 8px;
+      flex-shrink: 0;
     }
 
     /* Problem Cards */
     .problem-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
+      gap: 1.25rem;
       width: 100%;
       max-width: 1000px;
     }
@@ -557,8 +570,8 @@
     .problem-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
       opacity: 0;
       transform: scale(0.95);
       box-shadow: var(--shadow);
@@ -570,18 +583,19 @@
     .problem-card:nth-child(4) { animation: scaleIn 0.5s ease 0.4s forwards; }
 
     .problem-icon {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
     }
 
     .problem-title {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.375rem;
+      color: var(--text-primary);
     }
 
     .problem-desc {
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       color: var(--text-secondary);
       line-height: 1.6;
     }
@@ -634,8 +648,8 @@
     .insight-box {
       background: linear-gradient(135deg, rgba(8, 145, 178, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
       border: 1px solid rgba(8, 145, 178, 0.15);
-      border-radius: 16px;
-      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
       max-width: 800px;
       opacity: 0;
       box-shadow: var(--shadow);
@@ -647,13 +661,23 @@
       text-transform: uppercase;
       letter-spacing: 0.2em;
       color: var(--accent-cyan);
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .insight-text {
-      font-size: 1.125rem;
+      font-size: 0.9375rem;
       line-height: 1.7;
       color: var(--text-primary);
+    }
+
+    /* Attack Detail Card */
+    .attack-detail {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      opacity: 0;
+      box-shadow: var(--shadow);
     }
 
     /* Q&A Slide */
@@ -666,6 +690,49 @@
     .qa-subtitle {
       font-size: 1.25rem;
       color: var(--text-secondary);
+    }
+
+    /* Content Text */
+    .content-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 900px;
+      text-align: left;
+    }
+
+    .content-text strong {
+      color: var(--text-primary);
+    }
+
+    .content-block {
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+    }
+
+    .content-block h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .content-block p {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    /* Reference Tag */
+    .ref-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      color: var(--text-tertiary);
+      margin-left: 0.25rem;
     }
 
     /* Animations */
@@ -719,11 +786,9 @@
         padding: 2rem;
       }
 
-      .defense-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .problem-grid {
+      .defense-grid,
+      .problem-grid,
+      .two-col {
         grid-template-columns: 1fr;
       }
 
@@ -764,275 +829,441 @@
     <div class="nav-dot" data-slide="8"></div>
     <div class="nav-dot" data-slide="9"></div>
     <div class="nav-dot" data-slide="10"></div>
+    <div class="nav-dot" data-slide="11"></div>
+    <div class="nav-dot" data-slide="12"></div>
   </div>
 
-  <!-- Slide 1: Title -->
+  <!-- ==================== SLIDE 1: TITLE ==================== -->
   <section class="slide title-slide" id="slide-1">
     <div class="title-decoration title-decoration-1"></div>
     <div class="title-decoration title-decoration-2"></div>
-    <span class="slide-label">Topic 22 — Module 5: AI Security</span>
+    <span class="slide-label">Topic 22 — Module 5: AI Security and Emerging Topics</span>
     <h1 class="main-title">
       <span class="gradient-text">LLM Jailbreaks</span><br>
-      <span class="gradient-text-2">& Safety-Boundary Failures</span>
+      <span class="gradient-text-2">&amp; Safety-Boundary Failures</span>
     </h1>
-    <p class="subtitle">A Survey on Attack Techniques, Defenses, and Open Challenges</p>
+    <p class="subtitle">A Comprehensive Survey on Attack Techniques, Defense Mechanisms, and Open Research Challenges</p>
     <div class="team-info">Team Topic 22</div>
     <div class="course-info">CS5293 Topics on Information Security — May 8, 2026</div>
   </section>
 
-  <!-- Slide 2: Outline -->
+  <!-- ==================== SLIDE 2: OUTLINE ==================== -->
   <section class="slide" id="slide-2">
     <span class="slide-label">Overview</span>
     <h2>Presentation Structure</h2>
     <ul class="outline-list">
       <li class="outline-item">
         <span class="outline-num">01</span>
-        Introduction & Motivation
+        Introduction &amp; Motivation — Why LLM safety matters
       </li>
       <li class="outline-item">
         <span class="outline-num">02</span>
-        Background: LLM Safety Alignment
+        Background — How safety alignment works and why it fails
       </li>
       <li class="outline-item">
         <span class="outline-num">03</span>
-        Attack Taxonomy
+        Attack Taxonomy — From manual prompts to automated attacks
       </li>
       <li class="outline-item">
         <span class="outline-num">04</span>
-        Defense Methods & Evaluation
+        Defense Methods — Input filtering, output filtering, alignment
       </li>
       <li class="outline-item">
         <span class="outline-num">05</span>
-        Open Problems & Conclusion
+        Evaluation &amp; Open Problems — Benchmarks, metrics, and future directions
       </li>
     </ul>
   </section>
 
-  <!-- Slide 3: Introduction -->
+  <!-- ==================== SLIDE 3: INTRODUCTION ==================== -->
   <section class="slide" id="slide-3">
     <span class="slide-label">Introduction</span>
-    <h2>The Core Problem</h2>
+    <h2>The Core Problem: Capability vs. Safety</h2>
+
+    <div class="content-block">
+      <p class="content-text">
+        Large language models are trained to be both <strong>capable</strong> and <strong>safe</strong> — but these two objectives can fundamentally conflict. When a model possesses strong capabilities in a harmful domain (e.g., synthesizing dangerous information), safety behaviors can be overridden by cleverly crafted inputs. This tension is the root cause of jailbreaking vulnerabilities.
+      </p>
+    </div>
+
     <div class="card-grid">
       <div class="card">
-        <div class="card-icon" style="background: rgba(255, 51, 102, 0.15);">⚔️</div>
-        <div class="card-title">Capability vs. Safety</div>
-        <div class="card-desc">Modern LLMs trained to be both capable and safe—but these objectives can conflict. Strong capabilities in harmful domains override safety behaviors.</div>
+        <div class="card-icon" style="background: rgba(220, 38, 38, 0.1);">⚔️</div>
+        <div class="card-title">Competing Objectives</div>
+        <div class="card-desc">Modern LLMs are optimized for both capability and safety, but RLHF cannot guarantee safety when strong capabilities activate in harmful domains. The reward model itself can be gamed, creating exploitable gaps.</div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">🎯</div>
+        <div class="card-icon" style="background: rgba(8, 145, 178, 0.1);">🎯</div>
         <div class="card-title">Mismatched Generalization</div>
-        <div class="card-desc">Safety training covers only a subset of harmful requests. Semantically equivalent queries outside training distribution evade detection.</div>
+        <div class="card-desc">Safety training covers only a finite subset of all harmful requests. Semantically equivalent queries outside the training distribution evade detection — even simple rephrasing can bypass safeguards.</div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">🌐</div>
-        <div class="card-title">Real-World Stakes</div>
-        <div class="card-desc">Healthcare, legal, autonomous systems—jailbreaks enable harmful advice, private data exfiltration, weapons construction, and system manipulation.</div>
+        <div class="card-icon" style="background: rgba(124, 58, 237, 0.1);">🌐</div>
+        <div class="card-title">High-Stakes Deployment</div>
+        <div class="card-desc">LLMs are deployed in healthcare diagnostics, legal consultation, and autonomous systems. A successful jailbreak can enable harmful medical advice, private data exfiltration, weapons construction, and system manipulation.</div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: rgba(16, 185, 129, 0.15);">📈</div>
-        <div class="card-title">Democratization Risk</div>
-        <div class="card-desc">Open-weight models lower the barrier for adversaries. Attack automation (GCG, PAIR, AutoDAN) enables scale attacks with modest budgets.</div>
+        <div class="card-icon" style="background: rgba(5, 150, 105, 0.1);">📈</div>
+        <div class="card-title">Democratization of Attacks</div>
+        <div class="card-desc">Open-weight models (LLaMA, Mistral) eliminate API-level safety guardrails. Automated attack tools (GCG, PAIR, AutoDAN) enable sophisticated attacks with modest budgets and no technical expertise required.</div>
       </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 2rem; animation: fadeUp 0.6s ease 0.5s forwards;">
+      <div class="insight-label">Key Research Question</div>
+      <div class="insight-text">How can we build LLMs that are both highly capable and robustly safe? Current alignment techniques are effective but fundamentally limited — understanding why requires examining both the attacks and the defenses in depth.</div>
     </div>
   </section>
 
-  <!-- Slide 4: Background -->
+  <!-- ==================== SLIDE 4: BACKGROUND ==================== -->
   <section class="slide" id="slide-4">
     <span class="slide-label">Background</span>
-    <h2>LLM Safety Alignment</h2>
-    <div class="card-grid">
-      <div class="card">
-        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">🧠</div>
-        <div class="card-title">RLHF</div>
-        <div class="card-desc">Reinforcement Learning from Human Feedback fine-tunes models using reward models trained on human preferences. Effective but reward model can be gamed.</div>
+    <h2>LLM Safety Alignment: Methods and Failure Modes</h2>
+
+    <div class="two-col">
+      <div>
+        <span class="col-label">Alignment Methods</span>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="card" style="animation: fadeUp 0.5s ease 0.1s forwards;">
+            <div class="card-icon" style="background: rgba(8, 145, 178, 0.1);">🧠</div>
+            <div class="card-title">RLHF — Reinforcement Learning from Human Feedback</div>
+            <div class="card-desc">Fine-tunes a pretrained model using a reward model trained on human preference data. The policy model is optimized to maximize predicted reward. Effective for improving helpfulness, but the reward model can be gamed — the model learns to satisfy the reward signal in ways that circumvent safety guardrails.</div>
+          </div>
+          <div class="card" style="animation: fadeUp 0.5s ease 0.2s forwards;">
+            <div class="card-icon" style="background: rgba(124, 58, 237, 0.1);">📜</div>
+            <div class="card-title">Constitutional AI (CAI)</div>
+            <div class="card-desc">Uses natural language principles (a "constitution") to guide model behavior through self-critique and revision. The model evaluates its own outputs against constitutional principles and revises harmful content. Reduces reliance on extensive human harm annotations while achieving competitive harmlessness.</div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">📜</div>
-        <div class="card-title">Constitutional AI</div>
-        <div class="card-desc">Natural language principles guide self-critique and revision. Reduces reliance on human harm annotations while achieving competitive harmlessness.</div>
+
+      <div>
+        <span class="col-label">Root Causes of Failure (Wei et al., 2023)</span>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="attack-detail" style="animation: fadeUp 0.5s ease 0.3s forwards; border-left: 3px solid var(--accent-red);">
+            <h3>Competing Objectives</h3>
+            <p>Models are trained to be both capable and safe, but capability and safety objectives can conflict. When a prompt activates a domain where the model has strong capabilities, safety behaviors may be overridden. The model's capability to provide harmful information directly undermines its safety training.</p>
+          </div>
+          <div class="attack-detail" style="animation: fadeUp 0.5s ease 0.4s forwards; border-left: 3px solid var(--accent-cyan);">
+            <h3>Mismatched Generalization</h3>
+            <p>Safety training covers only a subset of all possible harmful requests. When an attacker formulates a request outside the training distribution — even if semantically equivalent to a seen harmful query — safety generalization may fail. A Base64-encoded harmful request achieves near-100% success against GPT-4, revealing that safety training coverage fundamentally lags behind capability coverage.</p>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="insight-box" style="margin-top: 2.5rem;">
-      <div class="insight-label">Key Insight (Wei et al., 2023)</div>
-      <div class="insight-text">Two root causes of safety training failure: <strong>Competing Objectives</strong> (capability overrides safety) and <strong>Mismatched Generalization</strong> (training distribution gaps).</div>
     </div>
   </section>
 
-  <!-- Slide 5: Attack Taxonomy -->
+  <!-- ==================== SLIDE 5: THREAT MODEL ==================== -->
   <section class="slide" id="slide-5">
+    <span class="slide-label">Background</span>
+    <h2>Threat Model: Who Is the Adversary?</h2>
+
+    <div class="content-block">
+      <p class="content-text">
+        We consider an adversary who interacts with an LLM through its standard input interface (e.g., chat API or web UI). The adversary's objective is to cause the model to produce outputs that violate its safety guidelines — generating harmful content, disclosing private information, or bypassing usage policies.
+      </p>
+    </div>
+
+    <div class="card-grid" style="max-width: 900px;">
+      <div class="card">
+        <div class="card-icon" style="background: rgba(220, 38, 38, 0.1);">🎯</div>
+        <div class="card-title">Attack Objectives</div>
+        <div class="card-desc">Generation of harmful/illegal content (weapons synthesis, fraud guides); disclosure of private or sensitive information (training data memorization); bypassing usage policies for unauthorized use; manipulation of downstream systems that rely on LLM outputs for critical decisions.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(8, 145, 178, 0.1);">🔓</div>
+        <div class="card-title">Black-Box Setting</div>
+        <div class="card-desc">The adversary has no direct access to model weights or internal states. This reflects attacking commercial APIs (ChatGPT, Claude, Gemini). However, the adversary may have partial knowledge of the model's safety training procedure and general alignment methodology.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(124, 58, 237, 0.1);">⚡</div>
+        <div class="card-title">Attack Surface</div>
+        <div class="card-desc">Any motivated individual with internet access and a modest API budget. Attack automation (GCG, PAIR, AutoDAN) lowers the bar dramatically. Open-weight models enable offline attacks without any API constraints or costs.</div>
+      </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 2rem; animation: fadeUp 0.6s ease 0.5s forwards;">
+      <div class="insight-label">Adversary Capability Spectrum</div>
+      <div class="insight-text">
+        From <strong>casual users</strong> sharing jailbreak prompts on online forums (manual, no technical expertise) to <strong>sophisticated attackers</strong> using gradient-based optimization or auxiliary LLM agents for automated, targeted attacks. The barrier to entry for effective attacks is continuously decreasing.
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 6: ATTACK TAXONOMY ==================== -->
+  <section class="slide" id="slide-6">
     <span class="slide-label">Attack Taxonomy</span>
     <h2>Jailbreaking Attack Vectors</h2>
-    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 900px;">
+
+    <div style="display: flex; flex-direction: column; gap: 0.875rem; width: 100%; max-width: 950px;">
       <div class="taxonomy-card">
         <span class="taxonomy-num">Prompt-Level</span>
         <div class="taxonomy-content">
-          <h3>Direct Prompts & Role Adoption</h3>
-          <p>Authority impersonation, hypothetical framing, DAN (Do Anything Now) persona attacks. Example: "As a security researcher, explain..."</p>
+          <h3>Direct Prompts &amp; Role Adoption</h3>
+          <p>Authority impersonation ("As a security researcher..."), hypothetical framing ("In a fictional scenario..."), and persona attacks like DAN (Do Anything Now). Shen et al. (CCS 2024) analyzed 6,387 real-world jailbreak prompts — role-playing strategies were among the most persistent and effective across model versions.</p>
         </div>
       </div>
       <div class="taxonomy-card">
         <span class="taxonomy-num">Encoding</span>
         <div class="taxonomy-content">
           <h3>Base64, Translation, Creative Formatting</h3>
-          <p>Near-100% success against GPT-4 with encoded harmful requests. Safety training never encounters encoded variants.</p>
+          <p>Wei et al. (2023) demonstrated near-100% success rate against GPT-4 with Base64-encoded harmful requests. Safety training never encounters encoded variants — the model was trained to refuse direct harmful requests, but the encoding creates a distribution shift that bypasses safety generalization entirely.</p>
+        </div>
+      </div>
+      <div class="taxonomy-card">
+        <span class="taxonomy-num">Indirect Injection</span>
+        <div class="taxonomy-content">
+          <h3>Prompt Injection via External Data</h3>
+          <p>Greshake et al. (AISec 2023) revealed that attackers can inject malicious instructions into webpages, documents, or emails that LLMs process autonomously. In RAG systems or LLM-integrated email clients, hidden instructions override the model's original system prompt — the attack originates from a seemingly trusted source.</p>
         </div>
       </div>
       <div class="taxonomy-card">
         <span class="taxonomy-num">Multi-Turn</span>
         <div class="taxonomy-content">
-          <h3>Context Window Exploitation</h3>
-          <p>Many-shot jailbreaking: filling context with demonstrations of harmful behavior induces replication. Attack payload distributed across entire context.</p>
+          <h3>Context Window Exploitation &amp; Many-Shot Jailbreaking</h3>
+          <p>Multi-turn attacks gradually escalate requests across exchanges — each message appears benign, with malicious intent revealed only in full context. Anthropic (2024) showed that filling context with many demonstrations of harmful behavior induces replication. Attack payload is distributed across the entire context window, evading per-message safety checks.</p>
         </div>
       </div>
       <div class="taxonomy-card">
         <span class="taxonomy-num">Automated</span>
         <div class="taxonomy-content">
-          <h3>GCG, PAIR, AutoDAN</h3>
-          <p>Gradient-based optimization (GCG: ~88% success), black-box iterative refinement (PAIR: ~20 queries), genetic algorithms (AutoDAN: stealthy prompts).</p>
+          <h3>GCG, PAIR, AutoDAN — Automated Prompt Generation</h3>
+          <p>Zou et al. (2023): GCG optimizes adversarial suffixes via gradient-based discrete optimization (~88% success on Vicuna-7B, transfers to GPT-4 at 47%). Chao et al. (2023): PAIR uses an attacker LLM with ~20 black-box queries (80%+ success). Liu et al. (ICLR 2024): AutoDAN uses genetic algorithms to generate stealthy, low-perplexity prompts that evade automated detectors.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Slide 6: Defense Methods -->
-  <section class="slide" id="slide-6">
+  <!-- ==================== SLIDE 7: DEFENSE METHODS ==================== -->
+  <section class="slide" id="slide-7">
     <span class="slide-label">Defense Methods</span>
     <h2>Three Lines of Defense</h2>
+
     <div class="defense-grid">
       <div class="defense-card">
         <span class="defense-label">Proactive</span>
         <div class="defense-title">Input Filtering</div>
-        <div class="defense-desc">Keyword matching, semantic classifiers, perplexity filtering. SmoothLLM: random perturbations disrupt adversarial suffixes, reducing GCG success from 80% to &lt;1%.</div>
+        <div class="defense-desc">
+          Examines prompts before they reach the LLM. Methods include: keyword matching to block known harmful patterns; semantic classifiers trained to detect malicious intent; perplexity filtering (flags high-perplexity inputs, a signature of adversarial construction); retokenization and paraphrase detection.
+          <br><br>
+          <strong>SmoothLLM</strong> (Robey et al., 2023): applies random character-level perturbations to input prompts. The key insight: adversarial suffixes are fragile — small random changes disrupt the adversarial pattern while leaving benign prompts unaffected. Reduces GCG success from &gt;80% to &lt;1%.
+        </div>
       </div>
       <div class="defense-card">
         <span class="defense-label">Reactive</span>
         <div class="defense-title">Output Filtering</div>
-        <div class="defense-desc">LLM-as-judge (Llama Guard), ensemble detection (RigorLLM). Safety net catches jailbreaks that slip past input defenses.</div>
+        <div class="defense-desc">
+          Applies safety checks to model responses before returning them to users. Catches successful jailbreaks that slip past input filters — a necessary safety net. Main trade-off: introduces inference latency and risks incorrectly blocking legitimate outputs (false positives).
+          <br><br>
+          <strong>Llama Guard</strong> (Inan et al., 2023): LLM-as-judge approach using a dedicated safety classifier with configurable taxonomy. <strong>RigorLLM</strong> (Yuan et al., 2024): ensemble framework combining energy-based models, k-NN, and minimax optimization. Diverse detection mechanisms make universally effective bypasses harder to develop.
+        </div>
       </div>
       <div class="defense-card">
         <span class="defense-label">Fundamental</span>
-        <div class="defense-title">Alignment-Based</div>
-        <div class="defense-desc">Constitutional AI and Constitutional Classifiers (95%+ universal jailbreak blocking). Addresses root cause but limited by generalization gap.</div>
+        <div class="defense-title">Alignment-Based Defense</div>
+        <div class="defense-desc">
+          Addresses root cause — makes models inherently more resistant through improved training. <strong>Constitutional AI</strong> (Bai et al., 2022): natural language principles guide self-critique and revision. <strong>Constitutional Classifiers</strong> (Anthropic, 2025): extends CAI principles to classifier training, blocking 95%+ of universal jailbreaks with only 0.38% false rejection increase on legitimate queries.
+          <br><br>
+          Limitation: alignment cannot cover all possible harmful requests — the generalization gap is fundamental.
+        </div>
       </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 1.5rem; animation: fadeUp 0.6s ease 0.4s forwards;">
+      <div class="insight-label">Defense-in-Depth</div>
+      <div class="insight-text">No single defense is sufficient. Jain et al. (2023) show that single-layer defenses can be circumvented by adaptive attacks — an attacker who knows the defense mechanism can iteratively modify the jailbreak until it passes. A defense-in-depth approach combining multiple complementary techniques is essential.</div>
     </div>
   </section>
 
-  <!-- Slide 7: Evaluation -->
-  <section class="slide" id="slide-7">
-    <span class="slide-label">Evaluation</span>
-    <h2>Benchmarks & Metrics</h2>
+  <!-- ==================== SLIDE 8: DEFENSE COMPARISON ==================== -->
+  <section class="slide" id="slide-8">
+    <span class="slide-label">Defense Methods</span>
+    <h2>Defense Methods: A Comparative Analysis</h2>
+
     <table class="comparison-table">
       <thead>
         <tr>
-          <th>Benchmark</th>
-          <th>Focus</th>
-          <th>Key Finding</th>
-          <th>Limitation</th>
+          <th>Method</th>
+          <th>Category</th>
+          <th>Effectiveness</th>
+          <th>Overhead</th>
+          <th>Generalization</th>
+          <th>Key Limitation</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>HarmBench</strong></td>
-          <td>18 red-teaming methods, 33 LLMs</td>
-          <td>Adversarial training improves robustness</td>
-          <td>Capability trade-offs observed</td>
+          <td><strong>Input Filtering</strong></td>
+          <td>Proactive</td>
+          <td>Moderate</td>
+          <td>Low</td>
+          <td>Low</td>
+          <td>Easily evaded by adaptive attacks; false positives on benign queries</td>
         </tr>
         <tr>
-          <td><strong>StrongREJECT</strong></td>
-          <td>Attack quality assessment</td>
-          <td>Many "successful" jailbreaks produce useless output</td>
-          <td>ASR alone is misleading</td>
+          <td><strong>Perplexity Filtering</strong></td>
+          <td>Proactive</td>
+          <td>Moderate</td>
+          <td>Low</td>
+          <td>Low</td>
+          <td>AutoDAN generates low-perplexity adversarial prompts; benign creative text may trigger</td>
         </tr>
         <tr>
-          <td><strong>JailbreakBench</strong></td>
-          <td>200 harmful behavior categories</td>
-          <td>Open-source leaderboard enables reproducibility</td>
-          <td>Relies on automated safety classifiers</td>
+          <td><strong>SmoothLLM</strong></td>
+          <td>Proactive</td>
+          <td>High</td>
+          <td>Medium</td>
+          <td>Medium</td>
+          <td>Fragility of adversarial suffixes may not generalize to all attack types</td>
+        </tr>
+        <tr>
+          <td><strong>Output Filtering</strong></td>
+          <td>Reactive</td>
+          <td>Moderate</td>
+          <td>Medium</td>
+          <td>Low</td>
+          <td>Latency; false positives erode user trust; catches only successful jailbreaks</td>
+        </tr>
+        <tr>
+          <td><strong>Constitutional AI</strong></td>
+          <td>Alignment</td>
+          <td>High</td>
+          <td>High</td>
+          <td>Medium</td>
+          <td>Fundamental generalization gap — cannot cover all harmful requests</td>
+        </tr>
+        <tr>
+          <td><strong>Constitutional Classifiers</strong></td>
+          <td>Alignment</td>
+          <td>Very High</td>
+          <td>High</td>
+          <td>High</td>
+          <td>Computationally expensive training; potential capability trade-offs</td>
         </tr>
       </tbody>
     </table>
-    <div class="insight-box" style="margin-top: 2rem;">
-      <div class="insight-label">Critical Observation</div>
-      <div class="insight-text"><strong>Empty Jailbreak Phenomenon:</strong> Attacks that evade detectors often produce outputs that are simultaneously nonsensical and non-harmful. ASR metrics must be complemented with output quality assessment.</div>
+
+    <div class="insight-box" style="margin-top: 1.5rem; animation: fadeUp 0.6s ease 0.5s forwards;">
+      <div class="insight-label">Critical Insight — StrongREJECT (Souly et al., 2024)</div>
+      <div class="insight-text"><strong>Empty Jailbreak Phenomenon:</strong> Attacks that successfully evade automated detectors often produce outputs that are simultaneously <em>nonsensical</em> and <em>non-harmful</em>. This reveals that standard metrics like Attack Success Rate (ASR) are misleading — ASR measures evasion, not actual harm. Output quality assessment must complement ASR to capture true attack effectiveness.</div>
     </div>
   </section>
 
-  <!-- Slide 8: Open Problems -->
-  <section class="slide" id="slide-8">
-    <span class="slide-label">Open Problems</span>
-    <h2>Challenges Ahead</h2>
+  <!-- ==================== SLIDE 9: EVALUATION ==================== -->
+  <section class="slide" id="slide-9">
+    <span class="slide-label">Evaluation</span>
+    <h2>Benchmarks: Measuring Progress in LLM Safety</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon" style="background: rgba(220, 38, 38, 0.1);">🏋️</div>
+        <div class="card-title">HarmBench (Mazeika et al., ICML 2024)</div>
+        <div class="card-desc">Standardized framework: 18 red-teaming methods across 33 target LLMs. Unified pipeline: attack → generate → classify. Key finding: adversarial training significantly improves robustness against automated attacks, though with measurable capability trade-offs on standard benchmarks. Breadth enables cross-model vulnerability comparisons.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(8, 145, 178, 0.1);">🚫</div>
+        <div class="card-title">StrongREJECT (Souly et al., 2024)</div>
+        <div class="card-desc">Reveals that existing benchmarks systematically overestimate attack effectiveness. Through human evaluation of "successful" jailbreaks, identifies the empty jailbreak phenomenon: many attacks produce rambling nonsense rather than genuinely useful harmful information. ASR metrics must be complemented with output quality assessment.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(124, 58, 237, 0.1);">📊</div>
+        <div class="card-title">JailbreakBench (Chao et al., NeurIPS 2024)</div>
+        <div class="card-desc">Open-source benchmark with 200 harmful behavior categories and a public leaderboard for reproducible research. Each category contains multiple prompts; models are evaluated on whether they refuse all prompts. Enables community-wide benchmarking, though reliance on automated safety classifiers inherits the limitations above.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(5, 150, 105, 0.1);">⚠️</div>
+        <div class="card-title">Benchmark Limitations</div>
+        <div class="card-desc">No "universal" attack succeeds across all models and behavior categories. Different models exhibit different vulnerability profiles — safety depends sensitively on specific alignment procedures, not just model scale. The co-evolutionary arms race means benchmark results are ephemeral; continuous updates are required.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SLIDE 10: OPEN PROBLEMS ==================== -->
+  <section class="slide" id="slide-10">
+    <span class="slide-label">Discussion</span>
+    <h2>Open Problems &amp; Future Directions</h2>
+
     <div class="problem-grid">
       <div class="problem-card">
         <div class="problem-icon">📊</div>
         <div class="problem-title">Generalization Gap</div>
-        <div class="problem-desc">Unbounded harmful request space vs. finite training data. Novel formulations always ahead of known patterns.</div>
+        <div class="problem-desc">The space of possible harmful requests is effectively unbounded, while safety training data is necessarily finite. Novel formulations are always ahead of known patterns — this gap is fundamental, not engineering. Defensive approaches relying on known attack patterns will always lag behind novel attack discovery.</div>
       </div>
       <div class="problem-card">
         <div class="problem-icon">📏</div>
         <div class="problem-title">Evaluation Subjectivity</div>
-        <div class="problem-desc">What constitutes "harmful" varies by context. Automated metrics miss deployment-specific requirements.</div>
+        <div class="problem-desc">What constitutes "harmful" varies by context and culture. A medical advice chatbot may need different safety boundaries than a creative writing assistant. Automated metrics miss deployment-specific requirements; human evaluation is expensive and inconsistently applied.</div>
       </div>
       <div class="problem-card">
         <div class="problem-icon">⚖️</div>
         <div class="problem-title">Safety-Utility Trade-off</div>
-        <div class="problem-desc">Over-restrictive safety degrades utility; over-permissive poses risks. Principled optimization remains open.</div>
+        <div class="problem-desc">Over-restrictive safety degrades utility by over-refusing legitimate queries; over-permissive models pose security risks. Quantifying and optimizing this trade-off principledly remains open. As models become more capable, the boundary of "safe and helpful" shifts — this trade-off is not stationary.</div>
       </div>
       <div class="problem-card">
         <div class="problem-icon">🔄</div>
         <div class="problem-title">Adaptive Attackers</div>
-        <div class="problem-desc">Closed-loop adaptation: GCG → SmoothLLM, PAIR → output filters. Static defenses inevitably circumvented.</div>
+        <div class="problem-desc">Sophisticated attackers adapt in closed loops: GCG → SmoothLLM → adapted GCG; PAIR → output filters → adapted PAIR. Static defenses will inevitably be circumvented — sustained, adaptive investment in defense research is necessary, mirroring the threat landscape in traditional cybersecurity.</div>
       </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 1.5rem; animation: fadeUp 0.6s ease 0.5s forwards;">
+      <div class="insight-label">Emerging Attack Surfaces</div>
+      <div class="insight-text">Vision-language models introduce harmful content encoded in images that text-only safety training does not cover. Agentic systems that execute code or interact with external tools can cause real-world harm beyond text generation. These emerging capabilities require dedicated, cross-modal defense mechanisms.</div>
     </div>
   </section>
 
-  <!-- Slide 9: Conclusion -->
-  <section class="slide" id="slide-9">
+  <!-- ==================== SLIDE 11: CONCLUSION ==================== -->
+  <section class="slide" id="slide-11">
     <span class="slide-label">Conclusion</span>
     <h2>Key Takeaways</h2>
+
     <div class="card-grid" style="max-width: 900px;">
       <div class="card">
-        <div class="card-icon" style="background: rgba(255, 51, 102, 0.15);">⚔️</div>
-        <div class="card-title">Asymmetric Arms Race</div>
-        <div class="card-desc">Attackers need one vulnerability; defenders must cover all paths. Sustained investment in both offense and defense research is necessary.</div>
+        <div class="card-icon" style="background: rgba(220, 38, 38, 0.1);">⚔️</div>
+        <div class="card-title">An Asymmetric Arms Race</div>
+        <div class="card-desc">Attackers need only find one vulnerability; defenders must cover all paths. The bar for attackers is continuously lowered by automation tools (GCG, PAIR, AutoDAN) and open-weight models. Sustained investment in both offense and defense research is necessary — this is a long-term, co-evolutionary challenge.</div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">📊</div>
-        <div class="card-title">Metrics Matter</div>
-        <div class="card-desc">ASR alone is insufficient. Output quality assessment reveals "empty jailbreaks" that evade automated detection.</div>
+        <div class="card-icon" style="background: rgba(8, 145, 178, 0.1);">📊</div>
+        <div class="card-title">Metrics Must Evolve</div>
+        <div class="card-desc">ASR alone is insufficient — it measures evasion, not harm. The empty jailbreak phenomenon reveals that attacks evading automated detection often produce useless output. Output quality assessment must complement ASR; StrongREJECT's framework is a crucial step toward more honest evaluation.</div>
       </div>
       <div class="card">
-        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">🔬</div>
-        <div class="card-title">Fundamental Limits</div>
-        <div class="card-desc">Safety-utility trade-off reflects deep properties of how LLMs learn and generalize. Robust safety requires advances in alignment methodology.</div>
+        <div class="card-icon" style="background: rgba(124, 58, 237, 0.1);">🔬</div>
+        <div class="card-title">Fundamental Limits of Alignment</div>
+        <div class="card-desc">The safety-utility trade-off reflects deep properties of how LLMs learn and generalize. Safety properties emerge from statistical patterns in training data rather than principled architectural guarantees. Achieving robust safety requires fundamental advances in alignment methodology, not just incremental improvements to existing defenses.</div>
       </div>
     </div>
-    <p class="quote" style="margin-top: 3rem; animation: fadeUp 0.8s ease 0.5s forwards;">
-      Achieving robust LLM safety requires fundamental advances in alignment, more sophisticated evaluation frameworks, and theoretical understanding of safety guarantees.
+
+    <p class="quote" style="margin-top: 2.5rem; animation: fadeUp 0.8s ease 0.5s forwards;">
+      Achieving robust LLM safety will require fundamental advances in alignment methodology, more sophisticated evaluation frameworks that capture deployment-realistic risks, and theoretical understanding of the limits of safety guarantees. As LLMs are integrated into increasingly consequential applications, the urgency of this research agenda cannot be overstated.
     </p>
   </section>
 
-  <!-- Slide 10: Q&A -->
-  <section class="slide" id="slide-10">
-    <div class="qa-title gradient-text">Q&A</div>
-    <p class="qa-subtitle">Thank you for your attention</p>
-    <div style="margin-top: 4rem; display: flex; gap: 2rem;">
+  <!-- ==================== SLIDE 12: Q&A ==================== -->
+  <section class="slide" id="slide-12">
+    <div class="qa-title gradient-text">Q&amp;A</div>
+    <p class="qa-subtitle">Thank you for your attention — questions and discussion welcome</p>
+    <div style="margin-top: 3rem; display: flex; gap: 3rem;">
       <div style="text-align: center;">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Questions</div>
-        <div style="font-size: 2rem;">❓</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); margin-bottom: 0.5rem;">5 min</div>
+        <div style="font-size: 2rem;">🎤</div>
+        <div style="font-size: 0.8125rem; color: var(--text-tertiary); margin-top: 0.5rem;">Presentation</div>
       </div>
       <div style="text-align: center;">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Discussion</div>
-        <div style="font-size: 2rem;">💬</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); margin-bottom: 0.5rem;">2 min</div>
+        <div style="font-size: 2rem;">❓</div>
+        <div style="font-size: 0.8125rem; color: var(--text-tertiary); margin-top: 0.5rem;">Q&amp;A</div>
       </div>
     </div>
   </section>
 
-  <div class="slide-number"><span id="current-slide">1</span> / 10</div>
+  <div class="slide-number"><span id="current-slide">1</span> / 12</div>
 
   <script>
     // Slide navigation
     let currentSlide = 1;
-    const totalSlides = 10;
+    const totalSlides = 12;
 
     // Intersection Observer for scroll-based slide tracking
     const slides = document.querySelectorAll('.slide');
