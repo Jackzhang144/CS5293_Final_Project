@@ -1,0 +1,9 @@
+[project]
+name = "cs5293-final-project"
+version = "0.1.0"
+description = "LLM Jailbreaks and Safety-Boundary Failures Survey"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+dev-dependencies = []
