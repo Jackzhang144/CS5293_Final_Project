@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Jailbreaks and Safety-Boundary Failures</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f2f8;
+      --accent-red: #dc2626;
+      --accent-cyan: #0891b2;
+      --accent-purple: #7c3aed;
+      --accent-green: #059669;
+      --accent-yellow: #d97706;
+      --text-primary: #1a1a2e;
+      --text-secondary: #64748b;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+      --gradient-1: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+      --gradient-2: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+      --gradient-3: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* Slide Container */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-primary);
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(8, 145, 178, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* Grid Pattern Overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Slide Number */
+    .slide-number {
+      position: fixed;
+      bottom: 2rem;
+      right: 3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      z-index: 100;
+      letter-spacing: 0.1em;
+    }
+
+    /* Navigation */
+    .nav-dots {
+      position: fixed;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 100;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      opacity: 0.3;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-dot.active {
+      opacity: 1;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 12px var(--accent-cyan);
+    }
+
+    /* Typography */
+    .slide-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: var(--accent-cyan);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .main-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      text-align: center;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .gradient-text {
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gradient-text-2 {
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gradient-text-3 {
+      background: var(--gradient-3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 800px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(8, 145, 178, 0.3);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-desc {
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Taxonomy Cards */
+    .taxonomy-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      box-shadow: var(--shadow);
+    }
+
+    .taxonomy-card:nth-child(1) { animation: slideIn 0.5s ease 0.1s forwards; }
+    .taxonomy-card:nth-child(2) { animation: slideIn 0.5s ease 0.2s forwards; }
+    .taxonomy-card:nth-child(3) { animation: slideIn 0.5s ease 0.3s forwards; }
+    .taxonomy-card:nth-child(4) { animation: slideIn 0.5s ease 0.4s forwards; }
+
+    .taxonomy-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-red);
+      background: rgba(220, 38, 38, 0.08);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .taxonomy-content h3 {
+      color: var(--text-primary);
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .taxonomy-content p {
+      font-size: 0.9375rem;
+    }
+
+    /* Defense Cards */
+    .defense-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .defense-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.95);
+      box-shadow: var(--shadow);
+    }
+
+    .defense-card:nth-child(1) { animation: scaleIn 0.5s ease 0.1s forwards; }
+    .defense-card:nth-child(2) { animation: scaleIn 0.5s ease 0.2s forwards; }
+    .defense-card:nth-child(3) { animation: scaleIn 0.5s ease 0.3s forwards; }
+
+    .defense-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .defense-card:nth-child(1)::after { background: var(--accent-red); }
+    .defense-card:nth-child(2)::after { background: var(--accent-cyan); }
+    .defense-card:nth-child(3)::after { background: var(--accent-purple); }
+
+    .defense-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .defense-card:nth-child(1) .defense-label { color: var(--accent-red); }
+    .defense-card:nth-child(2) .defense-label { color: var(--accent-cyan); }
+    .defense-card:nth-child(3) .defense-label { color: var(--accent-purple); }
+
+    .defense-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .defense-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .timeline-item {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .timeline-item:nth-child(1) { animation: fadeUp 0.5s ease 0.1s forwards; }
+    .timeline-item:nth-child(2) { animation: fadeUp 0.5s ease 0.2s forwards; }
+    .timeline-item:nth-child(3) { animation: fadeUp 0.5s ease 0.3s forwards; }
+    .timeline-item:nth-child(4) { animation: fadeUp 0.5s ease 0.4s forwards; }
+
+    .timeline-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-yellow);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Quote */
+    .quote {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 500;
+      font-style: italic;
+      text-align: center;
+      max-width: 900px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      position: relative;
+      opacity: 0;
+    }
+
+    .quote::before {
+      content: '"';
+      font-size: 6rem;
+      position: absolute;
+      top: -2rem;
+      left: -3rem;
+      color: var(--accent-red);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+    }
+
+    /* Comparison Table */
+    .comparison-table {
+      width: 100%;
+      max-width: 900px;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .comparison-table td {
+      font-size: 0.9375rem;
+    }
+
+    .comparison-table tr {
+      opacity: 0;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .comparison-table tr:nth-child(1) { animation-delay: 0.1s; }
+    .comparison-table tr:nth-child(2) { animation-delay: 0.2s; }
+    .comparison-table tr:nth-child(3) { animation-delay: 0.3s; }
+    .comparison-table tr:nth-child(4) { animation-delay: 0.4s; }
+    .comparison-table tr:nth-child(5) { animation-delay: 0.5s; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-high { background: rgba(5, 150, 105, 0.1); color: var(--accent-green); }
+    .badge-medium { background: rgba(217, 119, 6, 0.1); color: var(--accent-yellow); }
+    .badge-low { background: rgba(220, 38, 38, 0.1); color: var(--accent-red); }
+
+    /* Outline List */
+    .outline-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .outline-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 500;
+      padding: 1rem 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateX(-20px);
+      box-shadow: var(--shadow);
+    }
+
+    .outline-item:nth-child(1) { animation: slideIn 0.4s ease 0.1s forwards; }
+    .outline-item:nth-child(2) { animation: slideIn 0.4s ease 0.2s forwards; }
+    .outline-item:nth-child(3) { animation: slideIn 0.4s ease 0.3s forwards; }
+    .outline-item:nth-child(4) { animation: slideIn 0.4s ease 0.4s forwards; }
+    .outline-item:nth-child(5) { animation: slideIn 0.4s ease 0.5s forwards; }
+
+    .outline-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--accent-cyan);
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 212, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Problem Cards */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .problem-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem 2rem;
+      opacity: 0;
+      transform: scale(0.95);
+      box-shadow: var(--shadow);
+    }
+
+    .problem-card:nth-child(1) { animation: scaleIn 0.5s ease 0.1s forwards; }
+    .problem-card:nth-child(2) { animation: scaleIn 0.5s ease 0.2s forwards; }
+    .problem-card:nth-child(3) { animation: scaleIn 0.5s ease 0.3s forwards; }
+    .problem-card:nth-child(4) { animation: scaleIn 0.5s ease 0.4s forwards; }
+
+    .problem-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .problem-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .problem-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Title Slide Specific */
+    .title-slide {
+      text-align: center;
+    }
+
+    .title-slide .team-info {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    .title-slide .course-info {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .title-decoration {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .title-decoration-1 {
+      background: var(--accent-red);
+      top: -100px;
+      right: -100px;
+    }
+
+    .title-decoration-2 {
+      background: var(--accent-cyan);
+      bottom: -100px;
+      left: -100px;
+    }
+
+    /* Key Insight Box */
+    .insight-box {
+      background: linear-gradient(135deg, rgba(8, 145, 178, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+      border: 1px solid rgba(8, 145, 178, 0.15);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      max-width: 800px;
+      opacity: 0;
+      box-shadow: var(--shadow);
+    }
+
+    .insight-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
+    }
+
+    .insight-text {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+
+    /* Q&A Slide */
+    .qa-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .qa-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Stagger delays for cards */
+    .card:nth-child(1) { animation: fadeUp 0.5s ease 0.1s forwards; }
+    .card:nth-child(2) { animation: fadeUp 0.5s ease 0.2s forwards; }
+    .card:nth-child(3) { animation: fadeUp 0.5s ease 0.3s forwards; }
+    .card:nth-child(4) { animation: fadeUp 0.5s ease 0.4s forwards; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .slide {
+        padding: 2rem;
+      }
+
+      .defense-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline {
+        flex-direction: column;
+      }
+
+      .nav-dots {
+        display: none;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      .slide {
+        page-break-after: always;
+        min-height: 100vh;
+      }
+
+      .nav-dots, .grid-overlay {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-overlay"></div>
+
+  <div class="nav-dots">
+    <div class="nav-dot active" data-slide="1"></div>
+    <div class="nav-dot" data-slide="2"></div>
+    <div class="nav-dot" data-slide="3"></div>
+    <div class="nav-dot" data-slide="4"></div>
+    <div class="nav-dot" data-slide="5"></div>
+    <div class="nav-dot" data-slide="6"></div>
+    <div class="nav-dot" data-slide="7"></div>
+    <div class="nav-dot" data-slide="8"></div>
+    <div class="nav-dot" data-slide="9"></div>
+    <div class="nav-dot" data-slide="10"></div>
+  </div>
+
+  <!-- Slide 1: Title -->
+  <section class="slide title-slide" id="slide-1">
+    <div class="title-decoration title-decoration-1"></div>
+    <div class="title-decoration title-decoration-2"></div>
+    <span class="slide-label">Topic 22 — Module 5: AI Security</span>
+    <h1 class="main-title">
+      <span class="gradient-text">LLM Jailbreaks</span><br>
+      <span class="gradient-text-2">& Safety-Boundary Failures</span>
+    </h1>
+    <p class="subtitle">A Survey on Attack Techniques, Defenses, and Open Challenges</p>
+    <div class="team-info">Team Topic 22</div>
+    <div class="course-info">CS5293 Topics on Information Security — May 8, 2026</div>
+  </section>
+
+  <!-- Slide 2: Outline -->
+  <section class="slide" id="slide-2">
+    <span class="slide-label">Overview</span>
+    <h2>Presentation Structure</h2>
+    <ul class="outline-list">
+      <li class="outline-item">
+        <span class="outline-num">01</span>
+        Introduction & Motivation
+      </li>
+      <li class="outline-item">
+        <span class="outline-num">02</span>
+        Background: LLM Safety Alignment
+      </li>
+      <li class="outline-item">
+        <span class="outline-num">03</span>
+        Attack Taxonomy
+      </li>
+      <li class="outline-item">
+        <span class="outline-num">04</span>
+        Defense Methods & Evaluation
+      </li>
+      <li class="outline-item">
+        <span class="outline-num">05</span>
+        Open Problems & Conclusion
+      </li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: Introduction -->
+  <section class="slide" id="slide-3">
+    <span class="slide-label">Introduction</span>
+    <h2>The Core Problem</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon" style="background: rgba(255, 51, 102, 0.15);">⚔️</div>
+        <div class="card-title">Capability vs. Safety</div>
+        <div class="card-desc">Modern LLMs trained to be both capable and safe—but these objectives can conflict. Strong capabilities in harmful domains override safety behaviors.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">🎯</div>
+        <div class="card-title">Mismatched Generalization</div>
+        <div class="card-desc">Safety training covers only a subset of harmful requests. Semantically equivalent queries outside training distribution evade detection.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">🌐</div>
+        <div class="card-title">Real-World Stakes</div>
+        <div class="card-desc">Healthcare, legal, autonomous systems—jailbreaks enable harmful advice, private data exfiltration, weapons construction, and system manipulation.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(16, 185, 129, 0.15);">📈</div>
+        <div class="card-title">Democratization Risk</div>
+        <div class="card-desc">Open-weight models lower the barrier for adversaries. Attack automation (GCG, PAIR, AutoDAN) enables scale attacks with modest budgets.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Background -->
+  <section class="slide" id="slide-4">
+    <span class="slide-label">Background</span>
+    <h2>LLM Safety Alignment</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">🧠</div>
+        <div class="card-title">RLHF</div>
+        <div class="card-desc">Reinforcement Learning from Human Feedback fine-tunes models using reward models trained on human preferences. Effective but reward model can be gamed.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">📜</div>
+        <div class="card-title">Constitutional AI</div>
+        <div class="card-desc">Natural language principles guide self-critique and revision. Reduces reliance on human harm annotations while achieving competitive harmlessness.</div>
+      </div>
+    </div>
+    <div class="insight-box" style="margin-top: 2.5rem;">
+      <div class="insight-label">Key Insight (Wei et al., 2023)</div>
+      <div class="insight-text">Two root causes of safety training failure: <strong>Competing Objectives</strong> (capability overrides safety) and <strong>Mismatched Generalization</strong> (training distribution gaps).</div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Attack Taxonomy -->
+  <section class="slide" id="slide-5">
+    <span class="slide-label">Attack Taxonomy</span>
+    <h2>Jailbreaking Attack Vectors</h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 900px;">
+      <div class="taxonomy-card">
+        <span class="taxonomy-num">Prompt-Level</span>
+        <div class="taxonomy-content">
+          <h3>Direct Prompts & Role Adoption</h3>
+          <p>Authority impersonation, hypothetical framing, DAN (Do Anything Now) persona attacks. Example: "As a security researcher, explain..."</p>
+        </div>
+      </div>
+      <div class="taxonomy-card">
+        <span class="taxonomy-num">Encoding</span>
+        <div class="taxonomy-content">
+          <h3>Base64, Translation, Creative Formatting</h3>
+          <p>Near-100% success against GPT-4 with encoded harmful requests. Safety training never encounters encoded variants.</p>
+        </div>
+      </div>
+      <div class="taxonomy-card">
+        <span class="taxonomy-num">Multi-Turn</span>
+        <div class="taxonomy-content">
+          <h3>Context Window Exploitation</h3>
+          <p>Many-shot jailbreaking: filling context with demonstrations of harmful behavior induces replication. Attack payload distributed across entire context.</p>
+        </div>
+      </div>
+      <div class="taxonomy-card">
+        <span class="taxonomy-num">Automated</span>
+        <div class="taxonomy-content">
+          <h3>GCG, PAIR, AutoDAN</h3>
+          <p>Gradient-based optimization (GCG: ~88% success), black-box iterative refinement (PAIR: ~20 queries), genetic algorithms (AutoDAN: stealthy prompts).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Defense Methods -->
+  <section class="slide" id="slide-6">
+    <span class="slide-label">Defense Methods</span>
+    <h2>Three Lines of Defense</h2>
+    <div class="defense-grid">
+      <div class="defense-card">
+        <span class="defense-label">Proactive</span>
+        <div class="defense-title">Input Filtering</div>
+        <div class="defense-desc">Keyword matching, semantic classifiers, perplexity filtering. SmoothLLM: random perturbations disrupt adversarial suffixes, reducing GCG success from 80% to &lt;1%.</div>
+      </div>
+      <div class="defense-card">
+        <span class="defense-label">Reactive</span>
+        <div class="defense-title">Output Filtering</div>
+        <div class="defense-desc">LLM-as-judge (Llama Guard), ensemble detection (RigorLLM). Safety net catches jailbreaks that slip past input defenses.</div>
+      </div>
+      <div class="defense-card">
+        <span class="defense-label">Fundamental</span>
+        <div class="defense-title">Alignment-Based</div>
+        <div class="defense-desc">Constitutional AI and Constitutional Classifiers (95%+ universal jailbreak blocking). Addresses root cause but limited by generalization gap.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Evaluation -->
+  <section class="slide" id="slide-7">
+    <span class="slide-label">Evaluation</span>
+    <h2>Benchmarks & Metrics</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Benchmark</th>
+          <th>Focus</th>
+          <th>Key Finding</th>
+          <th>Limitation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>HarmBench</strong></td>
+          <td>18 red-teaming methods, 33 LLMs</td>
+          <td>Adversarial training improves robustness</td>
+          <td>Capability trade-offs observed</td>
+        </tr>
+        <tr>
+          <td><strong>StrongREJECT</strong></td>
+          <td>Attack quality assessment</td>
+          <td>Many "successful" jailbreaks produce useless output</td>
+          <td>ASR alone is misleading</td>
+        </tr>
+        <tr>
+          <td><strong>JailbreakBench</strong></td>
+          <td>200 harmful behavior categories</td>
+          <td>Open-source leaderboard enables reproducibility</td>
+          <td>Relies on automated safety classifiers</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="insight-box" style="margin-top: 2rem;">
+      <div class="insight-label">Critical Observation</div>
+      <div class="insight-text"><strong>Empty Jailbreak Phenomenon:</strong> Attacks that evade detectors often produce outputs that are simultaneously nonsensical and non-harmful. ASR metrics must be complemented with output quality assessment.</div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Open Problems -->
+  <section class="slide" id="slide-8">
+    <span class="slide-label">Open Problems</span>
+    <h2>Challenges Ahead</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">📊</div>
+        <div class="problem-title">Generalization Gap</div>
+        <div class="problem-desc">Unbounded harmful request space vs. finite training data. Novel formulations always ahead of known patterns.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📏</div>
+        <div class="problem-title">Evaluation Subjectivity</div>
+        <div class="problem-desc">What constitutes "harmful" varies by context. Automated metrics miss deployment-specific requirements.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⚖️</div>
+        <div class="problem-title">Safety-Utility Trade-off</div>
+        <div class="problem-desc">Over-restrictive safety degrades utility; over-permissive poses risks. Principled optimization remains open.</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🔄</div>
+        <div class="problem-title">Adaptive Attackers</div>
+        <div class="problem-desc">Closed-loop adaptation: GCG → SmoothLLM, PAIR → output filters. Static defenses inevitably circumvented.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Conclusion -->
+  <section class="slide" id="slide-9">
+    <span class="slide-label">Conclusion</span>
+    <h2>Key Takeaways</h2>
+    <div class="card-grid" style="max-width: 900px;">
+      <div class="card">
+        <div class="card-icon" style="background: rgba(255, 51, 102, 0.15);">⚔️</div>
+        <div class="card-title">Asymmetric Arms Race</div>
+        <div class="card-desc">Attackers need one vulnerability; defenders must cover all paths. Sustained investment in both offense and defense research is necessary.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(0, 212, 255, 0.15);">📊</div>
+        <div class="card-title">Metrics Matter</div>
+        <div class="card-desc">ASR alone is insufficient. Output quality assessment reveals "empty jailbreaks" that evade automated detection.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(168, 85, 247, 0.15);">🔬</div>
+        <div class="card-title">Fundamental Limits</div>
+        <div class="card-desc">Safety-utility trade-off reflects deep properties of how LLMs learn and generalize. Robust safety requires advances in alignment methodology.</div>
+      </div>
+    </div>
+    <p class="quote" style="margin-top: 3rem; animation: fadeUp 0.8s ease 0.5s forwards;">
+      Achieving robust LLM safety requires fundamental advances in alignment, more sophisticated evaluation frameworks, and theoretical understanding of safety guarantees.
+    </p>
+  </section>
+
+  <!-- Slide 10: Q&A -->
+  <section class="slide" id="slide-10">
+    <div class="qa-title gradient-text">Q&A</div>
+    <p class="qa-subtitle">Thank you for your attention</p>
+    <div style="margin-top: 4rem; display: flex; gap: 2rem;">
+      <div style="text-align: center;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Questions</div>
+        <div style="font-size: 2rem;">❓</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Discussion</div>
+        <div style="font-size: 2rem;">💬</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="slide-number"><span id="current-slide">1</span> / 10</div>
+
+  <script>
+    // Slide navigation
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    // Intersection Observer for scroll-based slide tracking
+    const slides = document.querySelectorAll('.slide');
+    const navDots = document.querySelectorAll('.nav-dot');
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5
+    };
+
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const slideId = entry.target.id.split('-')[1];
+          currentSlide = parseInt(slideId);
+          updateNavigation();
+          updateSlideNumber();
+        }
+      });
+    }, observerOptions);
+
+    slides.forEach(slide => slideObserver.observe(slide));
+
+    function updateNavigation() {
+      navDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index + 1 === currentSlide);
+      });
+    }
+
+    function updateSlideNumber() {
+      document.getElementById('current-slide').textContent = currentSlide;
+    }
+
+    // Click navigation on dots
+    navDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const slideNum = dot.dataset.slide;
+        document.getElementById(`slide-${slideNum}`).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        if (currentSlide < totalSlides) {
+          document.getElementById(`slide-${currentSlide + 1}`).scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentSlide > 1) {
+          document.getElementById(`slide-${currentSlide - 1}`).scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
