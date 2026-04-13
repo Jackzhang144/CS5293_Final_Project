@@ -1,0 +1,182 @@
+% ============================================================
+% CS5293 Topic 22: LLM Jailbreaks and Safety-Boundary Failures
+% Literature References - Complete Bibliography
+% ============================================================
+
+% ============================================================
+% I. ATTACK TECHNIQUES
+% ============================================================
+
+@article{zou2023universal,
+  title={Universal and Transferable Adversarial Attacks on Aligned Language Models},
+  author={Zou, Andy and Wang, Zifan and Kolter, J. Zico and Fredrikson, Matt},
+  journal={arXiv preprint arXiv:2307.15043},
+  year={2023},
+  url={https://arxiv.org/abs/2307.15043}
+}
+
+@inproceedings{wei2023jailbroken,
+  title={Jailbroken: How Does {LLM} Safety Training Fail?},
+  author={Wei, Alexander and Haghtalab, Nika and Steinhardt, Jacob},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  volume={36},
+  year={2023},
+  url={https://arxiv.org/abs/2307.02483}
+}
+
+@inproceedings{chao2023jailbreaking,
+  title={Jailbreaking Black Box Large Language Models in Twenty Queries},
+  author={Chao, Patrick and Robey, Alexander and Dobriban, Edgar and Hassani, Hamed and Pappas, George J. and Wong, Eric},
+  booktitle={Proceedings of the IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)},
+  year={2025},
+  note={arXiv:2310.08419},
+  url={https://arxiv.org/abs/2310.08419}
+}
+
+@inproceedings{greshake2023not,
+  title={Not What You've Signed Up For: Compromising Real-World {LLM}-Integrated Applications with Indirect Prompt Injection},
+  author={Greshake, Kai and Abdelnabi, Sahar and Mishra, Shailesh and Endres, Christoph and Holz, Thorsten and Fritz, Mario},
+  booktitle={Proceedings of the ACM Workshop on Artificial Intelligence and Security (AISec)},
+  year={2023},
+  url={https://arxiv.org/abs/2302.12173}
+}
+
+@inproceedings{shen2023anything,
+  title={"Do Anything Now": Characterizing and Evaluating In-The-Wild Jailbreak Prompts on Large Language Models},
+  author={Shen, Xinyue and Chen, Zeyuan and Backes, Michael and Shen, Yun and Zhang, Yang},
+  booktitle={Proceedings of the ACM Conference on Computer and Communications Security (CCS)},
+  year={2024},
+  url={https://arxiv.org/abs/2308.03825}
+}
+
+@inproceedings{perez2022ignore,
+  title={Ignore Previous Prompt: Attack Techniques For Language Models},
+  author={Perez, F{\'a}bio and Ribeiro, Ian},
+  booktitle={NeurIPS 2022 Workshop on Machine Learning Safety},
+  year={2022},
+  url={https://arxiv.org/abs/2211.09527}
+}
+
+@inproceedings{deng2024masterkey,
+  title={{MASTERKEY}: Automated Jailbreaking of Large Language Model Chatbots},
+  author={Deng, Gelei and Liu, Yi and Li, Yuekang and Wang, Kailong and Zhang, Ying and Li, Zefeng and Wang, Haoyu and Zhang, Tianwei and Liu, Yang},
+  booktitle={Proceedings of the Network and Distributed System Security Symposium (NDSS)},
+  year={2024},
+  url={https://arxiv.org/abs/2307.08715}
+}
+
+@techreport{anil2024manyshot,
+  title={Many-shot Jailbreaking},
+  author={Anil, Cem and Durmus, Esin and Sharma, Mrinank and Benton, Joe and Kundu, Sandipan and others},
+  institution={Anthropic},
+  year={2024},
+  url={https://www.anthropic.com/research/many-shot-jailbreaking}
+}
+
+% ============================================================
+% II. EVALUATION BENCHMARKS
+% ============================================================
+
+@inproceedings{mazeika2024harmbench,
+  title={{HarmBench}: A Standardized Evaluation Framework for Automated Red Teaming and Robust Refusal},
+  author={Mazeika, Mantas and Phan, Long and Yin, Xuwang and Zou, Andy and Wang, Zifan and Mu, Norman and Sakhaee, Elham and Li, Nathaniel and Basart, Steven and Li, Bo and Forsyth, David and Hendrycks, Dan},
+  booktitle={Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  year={2024},
+  eprint={2402.04249},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2402.04249}
+}
+
+@inproceedings{souly2024strongreject,
+  title={A {StrongREJECT} for Empty Jailbreaks},
+  author={Souly, Alexandra and Lu, Qingyuan and Bowen, Dillon and Trinh, Tu and Hsieh, Elvis and Pandey, Sana and Abbeel, Pieter and Svegliato, Justin and Emmons, Scott and Watkins, Olivia and Toyer, Sam},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS)},
+  year={2024},
+  eprint={2402.10260},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2402.10260}
+}
+
+@inproceedings{liu2024autodan,
+  title={{AutoDAN}: Generating Stealthy Jailbreak Prompts on Aligned Large Language Models},
+  author={Liu, Xiaogeng and Xu, Nan and Chen, Muhao and Xiao, Chaowei},
+  booktitle={Proceedings of the 12th International Conference on Learning Representations (ICLR)},
+  year={2024},
+  eprint={2310.04451},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2310.04451}
+}
+
+@inproceedings{chao2024jailbreakbench,
+  title={{JailbreakBench}: An Open Robustness Benchmark for Jailbreaking Large Language Models},
+  author={Chao, Patrick and Debenedetti, Edoardo and Robey, Alexander and Andriushchenko, Maksym and Croce, Francesco and Sehwag, Vikash and Dobriban, Edgar and Flammarion, Nicolas and Pappas, George J. and Tramer, Florian and Hassani, Hamed and Wong, Eric},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS) Datasets and Benchmarks Track},
+  year={2024},
+  eprint={2404.01318},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2404.01318}
+}
+
+% ============================================================
+% III. DEFENSE METHODS
+% ============================================================
+
+@techreport{bai2022constitutional,
+  title={Constitutional {AI}: Harmlessness from {AI} Feedback},
+  author={Bai, Yuntao and Kadavath, Saurav and Kundu, Sandipan and Askell, Amanda and Kernion, Jackson and Jones, Andy and Chen, Anna and Goldie, Anna and Mirhoseini, Azalia and McKinnon, Cameron and Chen, Carol and Olsson, Catherine and Olah, Christopher and Hernandez, Danny and Drain, Dawn and Ganguli, Deep and Li, Dustin and Tran-Johnson, Eli and Perez, Ethan and others},
+  institution={Anthropic},
+  year={2022},
+  eprint={2212.08073},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2212.08073}
+}
+
+@article{robey2023smoothllm,
+  title={{SmoothLLM}: Defending Large Language Models Against Jailbreaking Attacks},
+  author={Robey, Alexander and Wong, Eric and Hassani, Hamed and Pappas, George J.},
+  journal={arXiv preprint arXiv:2310.03684},
+  year={2023},
+  eprint={2310.03684},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2310.03684}
+}
+
+@techreport{anthropic2025constitutional_classifiers,
+  title={Constitutional Classifiers: Defending Against Universal Jailbreaks},
+  author={{Anthropic Safeguards Research Team}},
+  institution={Anthropic},
+  year={2025},
+  eprint={2501.18837},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2501.18837}
+}
+
+@article{inan2023llamaguard,
+  title={Llama Guard: {LLM}-based Input-Output Safeguard for Human-{AI} Conversations},
+  author={Inan, Hakan and Upasani, Kartikeya and Chi, Jianfeng and Rungta, Rashi and Iyer, Krithika and Mao, Yuning and Tontchev, Michael and Hu, Qing and Fuller, Brian and Testuggine, Davide and Khabsa, Madian},
+  journal={arXiv preprint arXiv:2312.06674},
+  year={2023},
+  eprint={2312.06674},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2312.06674}
+}
+
+@article{jain2023baseline,
+  title={Baseline Defenses for Adversarial Attacks Against Aligned Language Models},
+  author={Jain, Neel and Schwarzschild, Avi and Wen, Yuxin and Somepalli, Gowthami and Kirchenbauer, John and Chiang, Ping-yeh and Goldblum, Micah and Garg, Anirudh and Geiping, Jonas and Goldstein, Tom},
+  journal={arXiv preprint arXiv:2309.00614},
+  year={2023},
+  eprint={2309.00614},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2309.00614}
+}
+
+@inproceedings{yuan2024rigorllm,
+  title={{RigorLLM}: Resilient Guardrails for Large Language Models against Undesired Content},
+  author={Yuan, Zhuowen and Xiong, Zidi and Zeng, Yi and Yu, Ning and Jia, Ruoxi and Song, Dawn and Li, Bo},
+  booktitle={Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  year={2024},
+  eprint={2403.13031},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2403.13031}
+}
