@@ -27,7 +27,7 @@ import {
   Shield,
   Assessment,
   Lightbulb,
-  TrendUp,
+  TrendingUp,
   People,
   Code,
   Email,
@@ -38,7 +38,6 @@ import {
   CheckCircle,
   Cancel,
   Speed,
-  TrendingUp,
   WarningAmber,
   FlashOn,
   Lock,
@@ -758,7 +757,7 @@ const EvaluationSlide = () => (
       </Grid>
       <Grid item xs={6}>
         <IconCard
-          icon={<TrendUp sx={{ color: accent.purple, fontSize: 28 }} />}
+          icon={<TrendingUp sx={{ color: accent.purple, fontSize: 28 }} />}
           title="JailbreakBench (Chao et al., NeurIPS 2024)"
           description="Open-source benchmark with 200 harmful behavior categories and public leaderboard. Each category contains multiple prompts. Enables reproducible research."
           color={accent.purple}
@@ -859,7 +858,7 @@ const ConclusionSlide = () => (
         <AnimatedCard sx={{ height: '100%' }}>
           <CardContent>
             <Box sx={{ width: 48, height: 48, borderRadius: 2, bgcolor: 'rgba(220, 38, 38, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-              <TrendUp sx={{ color: accent.red, fontSize: 24 }} />
+              <TrendingUp sx={{ color: accent.red, fontSize: 24 }} />
             </Box>
             <Typography variant="h4" gutterBottom>An Asymmetric Arms Race</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
