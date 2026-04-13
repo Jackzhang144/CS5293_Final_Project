@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{hyperref}
+\usepackage{booktabs}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
@@ -76,7 +77,7 @@ Prompt-level attacks manipulate the input text to exploit weaknesses in safety t
 
 Multi-turn attacks exploit the context window and conversation history to gradually escalate requests. Initial turns establish trust or context before introducing the harmful query in later turns. The key challenge with multi-turn attacks is that each individual message may appear benign, only revealing malicious intent when viewed in full conversation context.
 
-Recent work on many-shot jailbreaking \cite{anil2024manyshot} demonstrates that extending context windows can introduce new vulnerabilities, where filling the context with many examples of a harmful behavior can诱导 the model to replicate that behavior.
+Recent work on many-shot jailbreaking \cite{anil2024manyshot} demonstrates that extending context windows can introduce new vulnerabilities, where filling the context with many examples of a harmful behavior can induce the model to replicate that behavior.
 
 \subsection{Automated and Transferable Attacks}
 
@@ -125,14 +126,14 @@ Alignment-based defenses offer the most fundamental solution but are computation
 \centering
 \caption{Comparison of Defense Methods.}
 \label{tab:defense-comparison}
-\begin{tabular}{|l|l|l|l|}
-\hline
-Method & Effectiveness & Overhead & Generalization \\ \hline
-Input Filtering & Moderate & Low & Low \\ \hline
-Output Filtering & Moderate & Medium & Low \\ \hline
-Constitutional AI & High & High & Medium \\ \hline
-SmoothLLM & High & Medium & Medium \\ \hline
-Constitutional Classifiers & Very High & High & High \\ \hline
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Method & Effectiveness & Overhead & Generalization \\ \midrule
+Input Filtering & Moderate & Low & Low \\
+Output Filtering & Moderate & Medium & Low \\
+Constitutional AI & High & High & Medium \\
+SmoothLLM & High & Medium & Medium \\
+Constitutional Classifiers & Very High & High & High \\ \bottomrule
 \end{tabular}
 \end{table}
 
