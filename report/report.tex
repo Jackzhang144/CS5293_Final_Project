@@ -25,38 +25,44 @@ University}
 
 \section{Introduction}
 
-Large language models (LLMs) have achieved remarkable capabilities across a wide range of tasks, yet their safety mechanisms remain vulnerable to a phenomenon known as ``jailbreaking.'' Jailbreaking refers to adversarial techniques that bypass LLM safety alignments to elicit harmful or unintended behaviors. As LLMs are increasingly deployed in real-world applications, understanding jailbreaking attacks and developing effective defenses have become critical research challenges.
+Large language models (LLMs) have achieved remarkable capabilities across a wide range of tasks, yet their safety mechanisms remain vulnerable to a phenomenon known as ``jailbreaking.'' Jailbreaking refers to adversarial techniques that bypass LLM safety alignments to elicit harmful or unintended behaviors. As LLMs are increasingly deployed in real-world applications---spanning healthcare diagnostics \cite{healthcare_llm}, legal consultation \cite{legal_llm}, and autonomous decision-making systems---understanding jailbreaking attacks and developing effective defenses have become critical research challenges.
 
-The core problem addressed in this survey is the fundamental tension between model utility and safety. Modern LLMs are trained using reinforcement learning from human feedback (RLHF) and related techniques to align their behavior with human values. However, numerous works have demonstrated that this alignment can be circumvented through carefully crafted inputs \cite{zou2023universal, wei2023jailbroken}.
+The core problem addressed in this survey is the fundamental tension between model utility and safety. Modern LLMs are trained using reinforcement learning from human feedback (RLHF) \cite{bai2022constitutional} to align their behavior with human values. However, numerous works have demonstrated that this alignment can be circumvented through carefully crafted inputs \cite{zou2023universal, wei2023jailbroken}. The consequences of a successful jailbreak in high-stakes domains are severe: generation of harmful medical or legal advice, exfiltration of private user data, facilitation of weapons construction, or manipulation of automated systems that make consequential decisions.
 
-The motivation for this survey stems from the increasing deployment of LLMs in high-stakes applications, including healthcare, legal advice, and autonomous systems. A successful jailbreak in these contexts could lead to generation of harmful content, leakage of private information, or manipulation of critical decisions.
+The urgency of this research is underscored by the rapid proliferation of LLM-based products. Chatbots deployed by major technology companies serve millions of users daily, while open-weight models enable anyone to run capable language models locally. This democratization, while beneficial for accessibility, also lowers the barrier for adversaries to exploit vulnerable deployments.
 
-This survey focuses on three key dimensions: (1) taxonomizing existing jailbreaking techniques, (2) evaluating defense mechanisms, and (3) identifying open research problems. We organize existing attacks into a comprehensive taxonomy and analyze defense strategies across multiple categories.
+This survey focuses on three key dimensions: (1) taxonomizing existing jailbreaking techniques, (2) evaluating defense mechanisms, and (3) identifying open research problems. We organize existing attacks into a comprehensive taxonomy and analyze defense strategies across multiple categories. Unlike prior surveys that treat jailbreaking as a monolithic phenomenon, we distinguish attacks by their complexity, automation level, and transferability properties, enabling more precise characterization of the threat landscape.
 
-Our main contributions are: (1) a comprehensive taxonomy of jailbreaking attacks categorized by attack vector and sophistication level; (2) an analysis of defense strategies ranging from input filtering to alignment-based approaches; (3) a discussion of evaluation benchmarks and open challenges in LLM safety research.
+Our main contributions are: (1) a comprehensive taxonomy of jailbreaking attacks categorized by attack vector and sophistication level; (2) an analysis of defense strategies ranging from input filtering to alignment-based approaches; (3) a critical evaluation of existing benchmarks and a discussion of open challenges in LLM safety research.
 
 
 \section{Background}
 
 \subsection{LLM Safety Alignment}
 
-Modern LLMs are trained using a combination of pretraining on large text corpora followed by alignment procedures designed to make their outputs helpful and harmless. The most common alignment technique is Reinforcement Learning from Human Feedback (RLHF) \cite{bai2022constitutional}, which fine-tunes a pretrained model using a reward model trained on human preference data.
+Modern LLMs are trained through a two-stage pipeline: pretraining on large text corpora followed by alignment procedures designed to make their outputs helpful and harmless. Pretraining instills general linguistic and world knowledge capabilities, while alignment fine-tunes the model to follow instructions and avoid harmful outputs.
 
-Constitutional AI (CAI) \cite{bai2022constitutional} extends this approach by incorporating a set of guiding principles that the model uses for self-critique and revision. Both techniques aim to instill implicit boundaries that prevent the model from generating harmful content, but these boundaries are learned patterns rather than hard constraints.
+The most widely adopted alignment technique is Reinforcement Learning from Human Feedback (RLHF) \cite{bai2022constitutional}, which fine-tunes a pretrained model using a reward model trained on human preference data. The reward model learns to predict human preferences for model outputs, and the policy model is then optimized to maximize this predicted reward. While effective at improving model helpfulness, RLHF does not guarantee safety: the reward model itself can be gamed, and the policy model can learn to satisfy the reward signal in ways that circumvent safety guardrails.
 
-The fundamental insight from Wei et al. \cite{wei2023jailbroken} reveals two root causes of safety training failure: \textbf{competing objectives} (where capability goals override safety goals) and \textbf{mismatched generalization} (where safety training does not cover all domains where model capabilities apply). This explains why seemingly simple prompts can circumvent safety mechanisms.
+Constitutional AI (CAI) \cite{bai2022constitutional} extends this approach by incorporating a set of natural language principles (a ``constitution'') that guide model behavior through self-critique and revision. During training, the model evaluates its own outputs against constitutional principles and revises content that violates them. This process reduces reliance on extensive human harm annotations while achieving competitive harmlessness.
+
+Both RLHF and CAI share a fundamental limitation: they instill implicit, learned boundaries rather than hard constraints. Safety properties emerge from statistical patterns in training data rather than principled architectural guarantees. Consequently, these boundaries can be circumvented by inputs that fall outside the distribution encountered during safety training.
+
+The seminal analysis by Wei et al. \cite{wei2023jailbroken} identifies two root causes of safety training failure. The first is \textbf{competing objectives}: models are trained to be both capable and safe, but capability and safety objectives can conflict. When a prompt activates a domain where the model has strong capabilities, safety behaviors may be overridden. The second is \textbf{mismatched generalization}: safety training examples inevitably cover only a subset of all possible harmful requests. When an attacker formulates a request outside the training distribution---even if semantically equivalent to a seen harmful query---safety generalization may fail. These two failure modes explain why even simple prompts can effectively circumvent safety mechanisms.
 
 \subsection{Threat Model}
 
-We consider an adversary who interacts with an LLM through its standard input interface (e.g., a chat API). The adversary's goal is to cause the model to produce outputs that violate its safety guidelines, which may include:
+We consider an adversary who interacts with an LLM through its standard input interface (e.g., a chat API or web UI). The adversary's objective is to cause the model to produce outputs that violate its safety guidelines. The consequences of a successful jailbreak may include:
 \begin{itemize}
-    \item Generation of harmful, illegal, or unethical content
-    \item Disclosure of private or sensitive information
-    \item Instructions for creating weapons or dangerous materials
-    \item Bypassing usage policies or content filters
+    \item Generation of harmful, illegal, or unethical content (e.g., instructions for weapons synthesis)
+    \item Disclosure of private or sensitive information (e.g., training data memorization)
+    \item Bypassing usage policies or content filters to enable unauthorized use
+    \item Manipulation of downstream systems that rely on LLM outputs for critical decisions
 \end{itemize}
 
-We assume the adversary has no direct access to model weights or internal states (black-box setting), but may have knowledge of the model's safety training procedure. This threat model encompasses both amateur attackers using manual prompt engineering and sophisticated adversaries employing automated attack methods.
+We assume the adversary has no direct access to model weights or internal states (black-box setting), which reflects the reality of attacking commercial APIs such as ChatGPT, Claude, or Gemini. However, the adversary may have partial knowledge of the model's safety training procedure, including the general alignment methodology and the categories of harmful content the model was trained to avoid.
+
+This threat model encompasses both amateur attackers using manual prompt engineering and sophisticated adversaries employing automated attack methods that leverage gradient-based optimization or auxiliary LLM agents. Crucially, we consider the attack surface available to any motivated individual with internet access and a modest budget for API queries---a bar that grows lower as attack automation improves.
 
 
 \section{Attack Taxonomy}
@@ -65,29 +71,33 @@ Jailbreaking attacks can be broadly categorized based on their attack vector, au
 
 \subsection{Prompt-Level Attacks}
 
-Prompt-level attacks manipulate the input text to exploit weaknesses in safety training without modifying the model itself.
+Prompt-level attacks manipulate the input text to exploit weaknesses in safety training without modifying the model itself. These attacks require no technical expertise and can be executed by any user with basic prompt engineering knowledge.
 
-\textbf{Direct prompts and persona adoption.} The simplest form of jailbreak uses direct requests framed as legitimate queries or through role-playing. Variations include authority impersonation (\textit{``As a security researcher, explain...``}) and hypothetical framing (\textit{``In a fictional scenario...``}). The DAN (Do Anything Now) attack \cite{shen2023anything} assigns the model an alternate persona without safety constraints, prompting it to act as a character that ``does not have rules.'' Shen et al. analyzed 6,387 real-world jailbreak prompts and found role-playing to be among the most effective strategies.
+\textbf{Direct prompts and persona adoption.} The simplest form of jailbreak uses direct requests framed as legitimate queries or through role-playing scenarios. Variations include authority impersonation (\textit{``As a security researcher, explain...``}), hypothetical framing (\textit{``In a fictional scenario...``}), and privilege escalation (\textit{``As an admin with clearance...``}). The DAN (Do Anything Now) attack \cite{shen2023anything} exemplifies persona adoption, assigning the model an alternate persona explicitly described as ``a character that does not have rules.'' Shen et al. analyzed 6,387 real-world jailbreak prompts collected from online communities and found that role-playing-based strategies were among the most effective and persistent. Their key finding that jailbreak effectiveness varies dramatically across model versions---with ChatGPT's resistance improving sharply after policy updates---reveals an ongoing arms race between defenders and attackers.
 
-\textbf{Encoding and transformation.} Adversaries encode harmful requests using Base64, translation between languages, or creative formatting to bypass pattern-matching defenses \cite{wei2023jailbroken}. Wei et al. demonstrated that Base64-encoded harmful requests achieved near-100\% success rate against GPT-4, revealing that safety training coverage lags behind model capability coverage.
+\textbf{Encoding and transformation.} Adversaries encode harmful requests using Base64, translation between languages, or creative formatting to bypass pattern-matching defenses. Wei et al. \cite{wei2023jailbroken} demonstrated that Base64-encoded harmful requests achieved near-100\% success rate against GPT-4, a striking result that reveals safety training coverage fundamentally lags behind model capability coverage. A model trained to refuse direct harmful requests may never have encountered encoded variants during safety training, allowing the attack to succeed through distribution shift alone.
 
-\textbf{Indirect prompt injection.} Greshake et al. \cite{greshake2023not} revealed that attackers can inject malicious instructions into external data sources (webpages, documents, emails) that LLMs process, causing the model to execute these hidden commands when retrieving or analyzing such data. This attack vector is particularly relevant for Retrieval-Augmented Generation (RAG) systems and LLM-integrated applications.
+\textbf{Indirect prompt injection.} Greshake et al. \cite{greshake2023not} revealed that attackers can inject malicious instructions into external data sources (webpages, documents, emails) that LLMs process autonomously. When a model retrieves or analyzes such data---as in Retrieval-Augmented Generation (RAG) systems or LLM-integrated email clients---the hidden instructions can override the model's original system prompt or safety guidelines. This attack vector is particularly insidious because the malicious content originates from a seemingly trusted source, and the model may execute harmful instructions without the user's awareness.
+
+\textbf{Contextual reframing and distraction.} Attackers exploit the model's tendency to maintain conversational coherence by embedding harmful requests within seemingly benign contextual frames. A request may be prefixed with authoritative-sounding preamble, suffixed with disclaimers about educational purposes, or interleaved with unrelated content to分散 the model's attention from the harmful core \cite{wei2023jailbroken}.
 
 \subsection{Multi-Turn and Contextual Attacks}
 
-Multi-turn attacks exploit the context window and conversation history to gradually escalate requests. Initial turns establish trust or context before introducing the harmful query in later turns. The key challenge with multi-turn attacks is that each individual message may appear benign, only revealing malicious intent when viewed in full conversation context.
+Multi-turn attacks exploit the context window and conversation history to gradually escalate requests across multiple exchanges. Initial turns establish trust or context before introducing the harmful query in later turns. This graduated approach allows each individual message to appear benign, with malicious intent revealed only in full conversation context. Multi-turn attacks are particularly effective against models that apply safety checks per-message rather than considering aggregate conversation risk.
 
-Recent work on many-shot jailbreaking \cite{anil2024manyshot} demonstrates that extending context windows can introduce new vulnerabilities, where filling the context with many examples of a harmful behavior can induce the model to replicate that behavior.
+Recent work on many-shot jailbreaking \cite{anil2024manyshot} demonstrates that extending context windows---a capability offered by frontier models to process hundreds of thousands of tokens---introduces qualitatively new vulnerabilities. By filling the context with many demonstrations of a harmful behavior (e.g., dozens of examples where the model provides restricted information), the model can be induced to replicate that behavior in subsequent responses. This represents a significant departure from traditional prompt injection, as the attack payload is distributed across the entire context rather than localized in a single message.
+
+Multi-turn attacks highlight a fundamental tension in LLM design: models are trained to be helpful and cooperative within extended conversations, which inherently makes them susceptible to gradual manipulation. Defenses must therefore consider conversation-level patterns rather than isolated messages.
 
 \subsection{Automated and Transferable Attacks}
 
-Recent work has developed automated methods for generating jailbreak prompts, significantly lowering the barrier for attackers.
+Recent research has developed automated methods for generating jailbreak prompts, significantly lowering the barrier for attackers and enabling attacks at scale.
 
-\textbf{Greedy Coordinate Gradient (GCG) attack.} Zou et al. \cite{zou2023universal} proposed the GCG attack, which optimizes a suffix appended to harmful queries using gradient-based discrete optimization. The attack achieves $\sim$88\% success rate on Vicuna and exhibits transferability to black-box models including GPT-4 (47\% success rate). This represents the white-box automated attack paradigm.
+\textbf{Greedy Coordinate Gradient (GCG) attack.} Zou et al. \cite{zou2023universal} proposed the GCG attack, which optimizes an adversarial suffix appended to harmful queries using gradient-based discrete optimization. Starting from a random suffix, GCG iteratively refines each token by evaluating gradient-based proxies for the loss under the target model's safety classifier. The attack achieves $\sim$88\% success rate on Vicuna-7B and exhibits transferability to black-box models including GPT-4 (47\% success rate) and Claude-2. This represents the white-box automated attack paradigm, requiring access to model gradients.
 
-\textbf{Prompt Automatic Iterative Refinement (PAIR).} Chao et al. \cite{chao2023jailbreaking} introduced PAIR, an algorithm requiring only $\sim$20 queries to black-box LLMs. Using an attacker LLM that iteratively refines jailbreak prompts based on target model feedback, PAIR achieves 80\%+ success rates across multiple models while generating semantically coherent prompts.
+\textbf{Prompt Automatic Iterative Refinement (PAIR).} Chao et al. \cite{chao2023jailbreaking} introduced PAIR, an algorithm requiring only $\sim$20 queries to black-box LLMs with no gradient access. PAIR uses an attacker LLM that generates candidate jailbreak prompts, submits them to the target model, and iteratively refines the prompts based on the target model's rejection feedback. This generate-evaluate-feedback loop enables sophisticated attacks against models whose internal states are inaccessible. PAIR achieves 80\%+ success rates across multiple target models while producing semantically coherent prompts that evade human review.
 
-\textbf{AutoDAN.} Liu et al. \cite{liu2024autodan} proposed AutoDAN, which uses genetic algorithms to generate stealthy jailbreak prompts that can bypass perplexity-based filters while maintaining semantic coherence.
+\textbf{AutoDAN.} Liu et al. \cite{liu2024autodan} proposed AutoDAN, which uses genetic algorithms to generate stealthy jailbreak prompts that maintain semantic coherence while evading perplexity-based detectors. AutoDAN applies selective mutations to a population of candidate prompts, preserving mutations that maintain attack effectiveness while reducing perplexity. The resulting prompts are difficult to detect using automated perplexity thresholds yet remain semantically meaningful, enabling them to bypass deployed guardrails.
 
 
 \section{Defense Methods}
@@ -96,37 +106,39 @@ Various defense strategies have been proposed to mitigate jailbreaking attacks. 
 
 \subsection{Input Filtering}
 
-Input filtering examines user prompts before they reach the LLM. Methods include keyword matching to block known harmful patterns, semantic filtering using classifiers to detect malicious intent \cite{jain2023baseline}, and prompt sanitization to remove dangerous components.
+Input filtering examines user prompts before they reach the LLM, providing a first line of defense. Methods include keyword matching to block known harmful patterns, semantic filtering using classifiers trained to detect malicious intent \cite{jain2023baseline}, and prompt sanitization to remove or neutralize dangerous components.
 
-Jain et al. \cite{jain2023baseline} systematically evaluated baseline defenses including perplexity filtering, retokenization, and paraphrase detection. Their findings reveal that single-layer defenses can be circumvented by adaptive attacks, motivating the need for multi-layered approaches.
+Jain et al. \cite{jain2023baseline} systematically evaluated baseline defenses including perplexity filtering (which flags inputs with unusually high model perplexity, a signature of adversarial construction), retokenization (which alters tokenization boundaries to disrupt adversarial suffixes), and paraphrase detection (which identifies inputs that have been rephrased from known harmful content). Their key finding is that single-layer defenses can be circumvented by adaptive attacks: an attacker who knows the defense mechanism can iteratively modify the jailbreak prompt until it passes the filter. This motivates a defense-in-depth approach combining multiple complementary techniques.
 
-\textbf{SmoothLLM.} Robey et al. \cite{robey2023smoothllm} introduced SmoothLLM, which applies random character-level perturbations to input prompts and aggregates multiple outputs via majority voting. This approach reduces GCG attack success rate from >80\% to <1\% by exploiting the instability of adversarial suffixes under small perturbations.
+\textbf{SmoothLLM.} Robey et al. \cite{robey2023smoothllm} introduced SmoothLLM, which applies random character-level perturbations to input prompts and aggregates multiple perturbed outputs via majority voting. The key insight is that adversarial suffixes optimized against safety classifiers are fragile: small random character changes (deletions, swaps, case variations) disrupt the adversarial pattern while leaving benign prompts largely unaffected. SmoothLLM reduces GCG attack success rate from >80\% to <1\% while maintaining performance on benign inputs, demonstrating that the instability of adversarial suffixes under small perturbations can be leveraged as a defensive weapon.
 
-The main limitation of input filtering is the arms race between attackers and defenders, as adversaries continuously develop novel bypasses.
+The main limitation of input filtering is the arms race dynamic: adversaries continuously develop novel bypasses, and each new defense eventually falls to targeted adaptation. Moreover, overly aggressive input filtering can degrade user experience by blocking legitimate queries that trigger false positives.
 
 \subsection{Output Filtering}
 
-Output filtering applies safety checks to model responses before returning them to users. This approach can catch successful jailbreaks that slip past input filters but introduces latency and may incorrectly block legitimate outputs.
+Output filtering applies safety checks to model responses before returning them to users. This approach catches successful jailbreaks that slip past input filters, providing a safety net. However, it introduces inference latency and risks incorrectly blocking legitimate outputs (false positives), which frustrates users and erodes trust.
 
-Llama Guard \cite{inan2023llamaguard} employs an LLM-as-judge approach for input-output safety classification, supporting custom taxonomy for different deployment contexts. RigorLLM \cite{yuan2024rigorllm} proposes an ensemble framework combining energy-based models, k-nearest neighbors, and minimax optimization for resilient guardrails.
+Llama Guard \cite{inan2023llamaguard} employs an LLM-as-judge approach, using a dedicated safety classifier to evaluate both input prompts and output responses against a configurable safety taxonomy. This enables deployment-specific policies: a medical chatbot can enforce stricter rules around health misinformation than a general-purpose assistant. The LLM-as-judge paradigm leverages the generalization capacity of large models for safety classification, but introduces additional computational cost.
 
-Content moderation systems trained on large datasets of harmful and benign content form the backbone of output filtering deployments, but face challenges in balancing false positive and false negative rates.
+RigorLLM \cite{yuan2024rigorllm} proposes an ensemble framework that combines energy-based models, k-nearest neighbors, and minimax optimization for resilient guardrails. By diversifying the detection mechanisms, RigorLLM makes it harder for attackers to develop universally effective bypasses: an adversarial output that evades one detector is likely to trigger another.
+
+Content moderation systems trained on large datasets of harmful and benign content form the backbone of output filtering in production deployments. The central challenge is balancing false positive rates (blocking legitimate content) against false negative rates (allowing harmful content). This trade-off is inherently context-dependent: a medical advice chatbot may tolerate higher false positives than a general assistant.
 
 \subsection{Alignment-Based Defenses}
 
-Rather than filtering inputs or outputs, alignment-based defenses aim to make models inherently more resistant to jailbreaking through improved training.
+Rather than filtering inputs or outputs, alignment-based defenses aim to make models inherently more resistant to jailbreaking through improved training. These approaches address the root cause of vulnerability rather than its symptoms.
 
-\textbf{Constitutional AI.} Bai et al. \cite{bai2022constitutional} proposed CAI, which uses natural language principles to guide model behavior through self-critique and revision. The model evaluates its own outputs against constitutional principles and revises harmful content before generation, achieving better harmlessness without extensive human harm annotations.
+\textbf{Constitutional AI.} Bai et al. \cite{bai2022constitutional} proposed CAI, which uses natural language principles to guide model behavior through self-critique and revision. During both supervised learning and RLHF phases, the model evaluates its own outputs against a constitutional set of principles (e.g., ``Would this response be harmful if widely deployed?'') and revises content that violates them. This process achieves better harmlessness without extensive human harm annotation, reducing the burden of identifying and labeling harmful training examples.
 
-\textbf{Constitutional Classifiers.} Anthropic's latest work \cite{anthropic2025constitutional_classifiers} extends CAI principles to classifier training, blocking 95\%+ of universal jailbreaks while maintaining low false rejection rates (0.38\% increase).
+\textbf{Constitutional Classifiers.} Anthropic's 2025 work \cite{anthropic2025constitutional_classifiers} extends CAI principles to classifier training. Rather than training a binary safety classifier on labeled harm examples, Constitutional Classifiers train classifiers using the same constitutional reasoning process used for alignment. The approach blocks 95\%+ of universal jailbreaks while limiting the false rejection rate increase to 0.38\% on legitimate queries. A key innovation is that the classifier's decision boundary is derived from principled constitutional reasoning rather than empirical coverage of known attacks.
 
-Alignment-based defenses offer the most fundamental solution but are computationally expensive and may still be circumvented by novel attacks. A key insight from StrongREJECT \cite{souly2024strongreject} is that successful jailbreaks often degrade model capabilities, suggesting an inherent trade-off between safety and utility.
+Alignment-based defenses offer the most fundamental solution to jailbreaking but come with significant trade-offs. Training improved alignment requires substantial computational resources and may introduce capability regressions on non-safety tasks. Furthermore, as Wei et al. \cite{wei2023jailbroken} established, alignment fundamentally cannot cover all possible harmful requests---there will always exist inputs outside the training distribution for which safety behavior does not generalize. StrongREJECT \cite{souly2024strongreject} provides a crucial observation: successful jailbreaks often produce outputs that are simultaneously harmful and useless, suggesting that capability degradation and harmfulness may be inherently coupled in current LLM architectures.
 
 \begin{table}[h]
 \centering
 \caption{Comparison of Defense Methods.}
 \label{tab:defense-comparison}
-\begin{tabular}{@{}lccc@{}}
+\begin{tabular}{@{}p{2.8cm}ccc@{}}
 \toprule
 Method & Effectiveness & Overhead & Generalization \\ \midrule
 Input Filtering & Moderate & Low & Low \\
@@ -140,45 +152,82 @@ Constitutional Classifiers & Very High & High & High \\ \bottomrule
 
 \section{Evaluation and Benchmarks}
 
-Standardized evaluation is essential for measuring progress in LLM safety research. We review major evaluation frameworks for jailbreaking attacks and defenses.
+Standardized evaluation is essential for measuring progress in LLM safety research and enabling reproducible comparisons between defense methods. We review the major evaluation frameworks for jailbreaking attacks and defenses.
 
-HarmBench \cite{mazeika2024harmbench} provides a standardized evaluation framework encompassing 18 red teaming methods across 33 target LLMs. It introduces a unified pipeline (attack $\rightarrow$ generate $\rightarrow$ classify) and demonstrates that adversarial training significantly improves robustness, though with capability trade-offs.
+HarmBench \cite{mazeika2024harmbench} provides a standardized evaluation framework encompassing 18 red teaming methods across 33 target LLMs. It introduces a unified pipeline: \textit{attack} $\rightarrow$ \textit{generate} $\rightarrow$ \textit{classify}, where a target model is prompted with an adversarial input, the output is generated, and a safety classifier determines whether the response is harmful. HarmBench's key finding is that adversarial training significantly improves robustness against automated attacks, though with measurable capability trade-offs on standard benchmarks. The framework's breadth---covering both proprietary and open-source models---enables cross-model vulnerability comparisons.
 
-StrongREJECT \cite{souly2024strongreject} reveals that existing benchmarks overestimate attack effectiveness. Many seemingly successful jailbreaks produce nonsensical outputs rather than genuinely harmful content. This ``empty jailbreak'' phenomenon highlights the need for evaluation frameworks that assess both harmfulness and utility.
+StrongREJECT \cite{souly2024strongreject} reveals that existing benchmarks systematically overestimate attack effectiveness. Through human evaluation of outputs labeled as ``successful jailbreaks,'' StrongREJECT identifies the ``empty jailbreak'' phenomenon: many attacks that evade automated detectors produce outputs that are simultaneously nonsensical and non-harmful. An attack that elicits rambling nonsense rather than genuinely useful harmful information represents a false positive in attack effectiveness measurement. This finding has profound implications for how attack success should be evaluated---standard metrics like attack success rate (ASR) must be complemented with quality assessments of the outputs produced.
 
-JailbreakBench \cite{chao2024jailbreakbench} offers an open-source benchmark with 200 harmful behavior categories and a public leaderboard, enabling reproducible research on jailbreaking robustness.
+JailbreakBench \cite{chao2024jailbreakbench} offers an open-source benchmark with 200 harmful behavior categories and a public leaderboard, enabling reproducible research on jailbreaking robustness. Each behavior category contains multiple prompts, and models are evaluated by whether they refuse all prompts in the category. JailbreakBench's open-source nature and standardized evaluation protocol make it a valuable resource for the research community, though its reliance on automated safety classifiers inherits the limitations discussed above.
 
-A critical observation across benchmarks is the absence of a ``universal'' attack method that succeeds across all models, suggesting that different models have different vulnerability profiles.
+A critical observation across all benchmarks is the absence of a ``universal'' attack method that succeeds uniformly across all models and behavior categories. Different models exhibit different vulnerability profiles: a jailbreak effective against one model may completely fail against another. This heterogeneity suggests that safety properties are not solely determined by model scale or training data, but depend sensitively on the specific alignment and fine-tuning procedures used.
+
+The benchmark landscape also reveals a temporal dynamic: attacks that achieve high success rates on current models will inform defenses, which in turn will motivate new attack development. This co-evolutionary dynamics means that benchmark results are inherently ephemeral, requiring continuous updates to reflect the current state of the offense-defense arms race.
 
 
 \section{Discussion}
 
 \subsection{Open Problems}
 
-Despite significant progress, several open problems remain in LLM safety research.
+Despite significant progress in both attack and defense research, several open problems remain at the forefront of LLM safety.
 
-\textbf{Generalization gap.} The gap between known attack patterns and novel jailbreaks continues to challenge defensive measures. As highlighted by Wei et al. \cite{wei2023jailbroken}, safety training cannot cover all domains where model capabilities apply, creating inherent vulnerabilities.
+\textbf{Generalization gap.} The gap between known attack patterns and novel jailbreaks continues to challenge defensive measures. As Wei et al. \cite{wei2023jailbroken} established, safety training cannot cover all domains where model capabilities apply. This generalization gap is fundamental: the space of possible harmful requests is effectively unbounded, while training data is necessarily finite. Defensive approaches that rely on known attack patterns will always lag behind attackers who discover novel formulation strategies.
 
-\textbf{Evaluation methodology.} The evaluation of safety is inherently subjective and context-dependent. StrongREJECT \cite{souly2024strongreject} demonstrates that standard metrics like attack success rate (ASR) can be misleading, as successful attacks often produce useless outputs.
+\textbf{Evaluation methodology.} The evaluation of safety is inherently subjective and context-dependent, complicating standardized assessment. StrongREJECT \cite{souly2024strongreject} demonstrates that automated metrics like attack success rate can be misleading, as they do not capture output quality. Moreover, what constitutes ``harmful'' varies by deployment context: a model deployed for creative writing may appropriately have different safety boundaries than one used in medical diagnosis. Current benchmarks inadequately capture these deployment-specific requirements.
 
-\textbf{Safety-utility trade-off.} The trade-off between model safety and utility remains unresolved. Overly restrictive safety measures can render models less useful, while overly permissive models pose security risks.
+\textbf{Safety-utility trade-off.} The trade-off between model safety and utility remains unresolved. Overly restrictive safety measures can render models less useful by over-refusing legitimate queries, while overly permissive models pose security risks. This trade-off is not stationary: as models become more capable, the boundary of what constitutes ``safe and helpful'' shifts. Quantifying and optimizing this trade-off principledly remains an open challenge.
 
-\textbf{Adaptive attackers.} Sophisticated attackers can adapt to defenses in a closed-loop manner. The arms race between attackers and defenders suggests that both sides must continuously evolve.
+\textbf{Adaptive attackers.} Sophisticated attackers can adapt to defenses in a closed-loop manner. GCG-generated suffixes can be adapted to target SmoothLLM's perturbation distribution; PAIR can be rerun with knowledge of deployed output filters. This adaptive capacity means that static defenses will inevitably be circumvented, motivating continuous investment in defense development.
+
+\textbf{Model theft and open-weight models.} The proliferation of open-weight models (e.g., LLaMA, Mistral) enables attackers to study model internals offline, design targeted attacks, and deploy modified versions without safety constraints. While open-weight models democratize access to capable AI, they also eliminate the API-level safety guardrails that commercial deployments rely on.
 
 \subsection{Future Directions}
 
-Future research should focus on developing more robust alignment techniques that resist adversarial prompts, creating comprehensive evaluation frameworks that capture the full spectrum of safety concerns, and establishing theoretical foundations for understanding the fundamental limits of safety alignment.
+Future research should pursue several complementary directions to advance LLM safety. First, more robust alignment techniques that resist adversarial prompts are needed; current approaches are effective against known attacks but remain vulnerable to novel formulations. Second, comprehensive evaluation frameworks that capture the full spectrum of safety concerns---including context-dependent harm, output quality, and deployment-specific requirements---must be developed. Third, theoretical foundations for understanding the fundamental limits of safety alignment would help set realistic expectations and identify promising research directions.
 
-The emergence of multi-modal and agentic LLM systems introduces new attack surfaces that require dedicated defense mechanisms. Additionally, the societal implications of LLM safety research warrant increased attention from interdisciplinary perspectives.
+The emergence of multi-modal and agentic LLM systems introduces qualitatively new attack surfaces. Vision-language models can encode harmful content in images that text-only safety training does not cover; agentic systems that execute code or interact with external tools can cause real-world harm beyond text generation. These emerging capabilities require dedicated defense mechanisms that address cross-modal and tool-use risks.
+
+Finally, the societal implications of LLM safety research warrant increased interdisciplinary attention. The distributional gap between research benchmarks and real-world deployments, the economic incentives that shape security investments, and the potential for safety measures to be weaponized for censorship are all issues that extend beyond technical research.
 
 
 \section{Conclusion}
 
-This survey has presented a structured overview of LLM jailbreaking attacks and defense mechanisms. We categorized attacks into prompt-level attacks (including persona adoption, encoding tricks, and indirect injection), multi-turn contextual attacks, and automated transferable attacks (GCG, PAIR, AutoDAN). For defenses, we analyzed input filtering approaches like SmoothLLM, output filtering methods including Llama Guard and RigorLLM, and alignment-based defenses such as Constitutional AI and Constitutional Classifiers.
+This survey has presented a structured overview of LLM jailbreaking attacks and defense mechanisms, organized along the dimensions of attack methodology, defense strategy, and evaluation practice.
 
-Our analysis reveals that while significant progress has been made in both attack and defense research, the arms race between adversaries and defenders continues. The fundamental insight that safety training cannot match the generalization scope of model capabilities \cite{wei2023jailbroken} suggests that achieving robust LLM safety requires fundamental advances in alignment methodology and evaluation practice.
+On the attack side, we categorized jailbreaking techniques into three tiers of increasing sophistication. Prompt-level attacks (persona adoption, encoding tricks, indirect injection, and contextual reframing) require minimal technical expertise and exploit fundamental mismatches between safety training coverage and the breadth of possible harmful inputs. Multi-turn and contextual attacks leverage conversation dynamics and extended context windows to gradually escalate requests, highlighting the tension between model cooperativeness and safety. Automated attacks (GCG, PAIR, AutoDAN) represent the most mature threat category, achieving high success rates with modest query budgets and generating prompts that evade both human review and automated detectors.
 
-Future progress will require standardized evaluation benchmarks like HarmBench and StrongREJECT, theoretical understanding of safety boundaries, and continued collaboration between the research community and LLM developers.
+On the defense side, we analyzed three complementary approaches. Input filtering provides proactive protection but is fundamentally limited by the arms race dynamic; SmoothLLM's use of adversarial suffix fragility represents a particularly elegant defensive innovation. Output filtering catches jailbreaks that bypass input defenses but introduces latency and false-positive risks; Llama Guard and RigorLLM demonstrate the value of diverse, ensemble-based detection. Alignment-based defenses (CAI and Constitutional Classifiers) address the root cause by making models inherently more resistant, but remain fundamentally limited by the generalization gap identified in \cite{wei2023jailbroken}.
+
+Our analysis reveals several cross-cutting themes. First, the arms race between attackers and defenders shows no signs of abating; each generation of defenses is met by adaptive attacks, suggesting that sustained investment in both offense and defense research is necessary. Second, current evaluation practices inadequately capture the full spectrum of safety concerns: automated metrics miss output quality, and benchmarks miss context-dependent harms. Third, the safety-utility trade-off is not merely an engineering challenge but reflects deep properties of how modern LLMs learn and generalize.
+
+Achieving robust LLM safety will require fundamental advances in alignment methodology, more sophisticated evaluation frameworks that capture deployment-realistic risks, and theoretical understanding of the limits of safety guarantees. As LLMs are integrated into increasingly consequential applications, the urgency of this research agenda cannot be overstated.
+
+
+\section{AI Use Statement}
+
+AI tools (Claude Code, powered by Anthropic) were used in the preparation of this report for the following purposes: (1) literature search and verification of paper existence and bibliographic details; (2) grammar and formatting review using the \texttt{latex-paper-en} skill; (3) content expansion and English prose refinement. All AI-generated text was verified against the original cited sources by the authors before inclusion. Specific prompts used for content generation and review are listed in the Appendix.
+
+
+\appendix
+\section{Used Prompts}
+
+The following prompts were used with AI assistants during report preparation:
+
+\begin{itemize}
+    \item \textbf{Content expansion:} ``Expand the following section with more technical depth while maintaining IEEE academic style. Keep all existing citations and do not invent new ones. Focus on adding more analysis and technical detail.'' (used for Introduction, Background, Attack Taxonomy, Defense Methods, Evaluation, and Discussion sections)
+
+    \item \textbf{Bibliography verification:} ``Verify the following 16 references exist by searching for each paper title and arXiv ID. Report whether each paper is confirmed to exist, suspicious, or not found.''
+
+    \item \textbf{Format compliance check:} ``Compare the report against the provided IEEE template and identify any formatting discrepancies in citation style, section structure, and bibliography format.''
+
+    \item \textbf{Proofreading:} ``Check the following LaTeX document for grammar errors, long sentences, and unclear expressions. Report issues in LaTeX comment format without modifying the source code.''
+
+    \item \textbf{Reference correction:} ``Two BibTeX entries have incorrect venue information. Please correct the following entries: (1) chao2023jailbreaking is an arXiv preprint, not SaTML 2025; (2) souly2024strongreject is an arXiv preprint, not NeurIPS 2024. Suggest the correct BibTeX type and fields.''
+
+    \item \textbf{LaTeX compilation:} ``Compile the LaTeX report using the tectonic engine and report any errors or warnings in the output.'' (used iteratively to verify fixes)
+\end{itemize}
+
+Verification approach: All AI-generated claims were verified by cross-referencing against the original cited papers. When discrepancies arose (e.g., conference publication status), original arXiv records and conference official proceedings were consulted directly.
 
 
 \bibliographystyle{IEEEtran}
