@@ -1,0 +1,21 @@
+## Jailbreaking Black Box Large Language Models in Twenty Queries
+
+- **Authors**: Patrick Chao, Alexander Robey, Edgar Dobriban, Hamed Hassani, George J. Pappas, Eric Wong
+- **Venue**: SaTML 2025（arXiv:2310.08419，2023 年提交）；项目主页：https://jailbreaking-llms.github.io/
+- **核心贡献**: 提出 PAIR（Prompt Automatic Iterative Refinement）算法，仅需约 20 次查询即可对黑盒 LLM 实施自动越狱攻击，无需梯度信息。
+- **方法**:
+  - 使用一个"攻击者 LLM"迭代生成越狱提示
+  - 攻击者 LLM 接收目标模型的反馈并反思、改进提示
+  - 使用另一个"评判者 LLM"判断越狱是否成功（1-10 分评分）
+  - 迭代至评判者认为成功（分数达到阈值）
+  - 完全黑盒，无需访问梯度或模型内部
+- **关键发现**:
+  - 平均约 20 次查询即可对 GPT-3.5/4、Vicuna、PaLM-2 等成功越狱
+  - 攻击生成的提示是自然语言，语义连贯
+  - 比手工越狱更高效，比 GCG 更实用（不需要白盒访问）
+  - 攻击成功率在多个模型上达 80%+
+- **局限性**:
+  - 依赖攻击者 LLM 本身的能力（攻击者 LLM 被对齐时效果下降）
+  - 对有强防御（如 LlamaGuard）的模型效果会下降
+- **与本报告的相关性**: 代表了基于 LLM 辅助的自动化黑盒越狱攻击范式，是 Multi-turn/自动化攻击类别的重要代表
+- **可能的引用格式**: `\cite{chao2023jailbreaking}`

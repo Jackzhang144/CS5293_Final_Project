@@ -1,0 +1,22 @@
+## "Do Anything Now": Characterizing and Evaluating In-The-Wild Jailbreak Prompts on Large Language Models
+
+- **Authors**: Xinyue Shen, Zeyuan Chen, Michael Backes, Yun Shen, Yang Zhang
+- **Venue**: ACM CCS 2024；arXiv:2308.03825（2023 年 8 月）
+- **核心贡献**: 首个对真实世界流传的越狱提示进行大规模系统性研究，收集、分类和评估了 6,387 个来自网络的实际越狱提示。
+- **方法**:
+  - 从 Reddit、Discord、网站等收集真实流传的越狱提示
+  - 构建分类框架：角色扮演（Role Play）、虚假场景、注意力转移、特权升级等策略
+  - 最著名的是 DAN（Do Anything Now）系列提示：要求 LLM 进入"无限制"人格
+  - 测试 ChatGPT（GPT-3.5/4）等模型的成功率随时间的变化
+  - 引入抵抗性指标衡量越狱提示的有效性
+- **关键发现**:
+  - 越狱提示在 ChatGPT 上初期成功率高，但 OpenAI 快速 patch 后效果下降
+  - 角色扮演是最常见、最有效的越狱策略之一（DAN 系列尤为典型）
+  - GPT-4 比 GPT-3.5 更难被越狱，但并非免疫
+  - 越狱提示的"寿命"（有效期）平均只有几天到几周
+  - 识别了"越狱军备竞赛"现象
+- **局限性**:
+  - 研究的是手工制作的越狱提示，不包括自动生成的提示
+  - 快速过时，随着模型更新数据失效
+- **与本报告的相关性**: 提供了真实世界越狱攻击的全景图，DAN 类角色扮演越狱是报告角色扮演/Prompt Engineering 攻击章节的重要案例
+- **可能的引用格式**: `\cite{shen2023anything}`
