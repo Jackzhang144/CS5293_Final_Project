@@ -29,9 +29,9 @@ Large language models (LLMs) have achieved remarkable capabilities across a wide
 
 The core problem addressed in this survey is the fundamental tension between model utility and safety. Modern LLMs are trained using reinforcement learning from human feedback (RLHF) \cite{bai2022constitutional} to align their behavior with human values. However, numerous works have demonstrated that this alignment can be circumvented through carefully crafted inputs \cite{zou2023universal, wei2023jailbroken}. The consequences of a successful jailbreak in high-stakes domains are severe: generation of harmful medical or legal advice, exfiltration of private user data, facilitation of weapons construction, or manipulation of automated systems that make consequential decisions.
 
-The urgency of this research is underscored by the rapid proliferation of LLM-based products. Chatbots deployed by major technology companies serve millions of users daily, while open-weight models enable anyone to run capable language models locally. This democratization, while beneficial for accessibility, also lowers the barrier for adversaries to exploit vulnerable deployments.
+The urgency is underscored by the rapid proliferation of LLM-based products. Chatbots serve millions of users daily, while open-weight models lower the barrier for adversaries to exploit vulnerable deployments.
 
-This survey focuses on three key dimensions: (1) taxonomizing existing jailbreaking techniques, (2) evaluating defense mechanisms, and (3) identifying open research problems. We organize existing attacks into a comprehensive taxonomy and analyze defense strategies across multiple categories. Unlike prior surveys that treat jailbreaking as a monolithic phenomenon, we distinguish attacks by their complexity, automation level, and transferability properties, enabling more precise characterization of the threat landscape.
+This survey focuses on three dimensions: (1) taxonomizing jailbreaking techniques, (2) evaluating defense mechanisms, and (3) identifying open problems. We organize attacks into a comprehensive taxonomy and analyze defense strategies across multiple categories, distinguishing attacks by complexity, automation level, and transferability.
 
 Our main contributions are: (1) a comprehensive taxonomy of jailbreaking attacks categorized by attack vector and sophistication level; (2) an analysis of defense strategies ranging from input filtering to alignment-based approaches; (3) a critical evaluation of existing benchmarks and a discussion of open challenges in LLM safety research.
 
@@ -183,11 +183,15 @@ Despite significant progress in both attack and defense research, several open p
 
 \subsection{Future Directions}
 
-Future research should pursue several complementary directions to advance LLM safety. First, more robust alignment techniques that resist adversarial prompts are needed; current approaches are effective against known attacks but remain vulnerable to novel formulations. Second, comprehensive evaluation frameworks that capture the full spectrum of safety concerns---including context-dependent harm, output quality, and deployment-specific requirements---must be developed. Third, theoretical foundations for understanding the fundamental limits of safety alignment would help set realistic expectations and identify promising research directions.
+Future research should pursue several complementary directions. First, more robust alignment techniques that resist adversarial prompts are needed. Second, comprehensive evaluation frameworks capturing context-dependent harm, output quality, and deployment-specific requirements must be developed. Third, theoretical foundations for understanding the fundamental limits of safety alignment would help set realistic expectations and guide research priorities.
 
 The emergence of multi-modal and agentic LLM systems introduces qualitatively new attack surfaces. Vision-language models can encode harmful content in images that text-only safety training does not cover; agentic systems that execute code or interact with external tools can cause real-world harm beyond text generation. These emerging capabilities require dedicated defense mechanisms that address cross-modal and tool-use risks.
 
 Finally, the societal implications of LLM safety research warrant increased interdisciplinary attention. The distributional gap between research benchmarks and real-world deployments, the economic incentives that shape security investments, and the potential for safety measures to be weaponized for censorship are all issues that extend beyond technical research.
+
+\subsection{Emerging Paradigm: Harness Engineering}
+
+A recent paradigm articulated by OpenAI \cite{openai2026harness} proposes \textbf{harness engineering}: structuring the agent's runtime environment to mechanically enforce safety properties through infrastructure (linters, structural tests, permission engines, hook systems) rather than relying solely on model training. Safety becomes an \textit{architectural property} rather than an \textit{emergent behavior}. Every safety rule is version-controlled—the agent cannot ``forget'' a constraint the way a fine-tuned model can. This addresses Wei et al.'s fundamental limitation \cite{wei2023jailbroken}: since safety training cannot cover all possible harmful requests, mechanical enforcement at the system level provides complementary protection independent of training distribution. Early production deployments demonstrate multi-layer pipelines that interdict harmful requests at independent checkpoints, offering a concrete engineering path toward safety guarantees that alignment alone cannot deliver.
 
 
 \section{Conclusion}
