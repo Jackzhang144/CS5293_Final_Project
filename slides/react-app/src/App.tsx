@@ -284,8 +284,6 @@ const EvaluationSlide: React.FC = () => (
             </Box>
             <Box sx={{
               color: bench.color, mb: 1.5,
-              animation: `gentlePulse 3s ease-in-out infinite`,
-              animationDelay: `${1 + idx * 0.4}s`,
             }}>
               {React.cloneElement(bench.icon, { sx: { fontSize: 36 } })}
             </Box>
